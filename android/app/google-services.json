@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "185353060908",
+    "project_id": "anthem-48edd",
+    "storage_bucket": "anthem-48edd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:185353060908:android:a60024389fe527e8820789",
+        "android_client_info": {
+          "package_name": "com.example.anthem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "185353060908-rvc5tcpv8jucsqiqmmq4i88868bl720j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHvO_BlV9cusiSM9oAl45O9MEVeVFzY20"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "185353060908-rvc5tcpv8jucsqiqmmq4i88868bl720j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
