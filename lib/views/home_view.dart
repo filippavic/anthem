@@ -17,8 +17,6 @@ class _HomeViewState extends State<HomeView> {
   late String _timeString;
   String _currentWeather = "";
 
- 
-
   @override
   void initState() {
     _timeString = _formatDateTime(DateTime.now());
@@ -57,11 +55,6 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-
-    // Current time
-    DateTime now = DateTime.now();
-    String formattedTime = DateFormat('kk:mm').format(now);
-
     return Scaffold(
       body: Stack(
         alignment: Alignment.topLeft,
@@ -106,7 +99,7 @@ class _HomeViewState extends State<HomeView> {
                           ),
                           Row(
                             children: [
-                              Icon(Icons.settings, color: Colors.white,),
+                              Icon(Icons.settings, color: Colors.white),
                             ],
                           )
                         ],
