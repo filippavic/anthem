@@ -1,3 +1,4 @@
+import 'package:anthem/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -26,9 +27,21 @@ class MyApp extends StatelessWidget {
       title: 'Anthem',
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.black,
-        fontFamily: "Inter"
+        fontFamily: "Inter",
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: Color(0x00ffffff),
+          type: BottomNavigationBarType.fixed,
+          selectedLabelStyle: TextStyle(
+            fontSize: 12,
+          ),
+          unselectedLabelStyle: TextStyle(
+            fontSize: 12,
+          ),
+          selectedItemColor: Constants.kSecondaryColor,
+          unselectedItemColor: Colors.white38,
+        ),
       ),
-      initialRoute: '/',
+      initialRoute: '/home',
       navigatorKey: _navigator,
       routes: <String, WidgetBuilder>{
         '/' : (context) => WelcomePage(),
