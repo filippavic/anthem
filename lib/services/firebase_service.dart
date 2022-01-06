@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:anthem/utils/resource.dart';
 import 'package:twitter_login/twitter_login.dart';
+import 'dart:developer' as developer;
+import 'package:anthem/globals/globals.dart' as globals;
 
 class FirebaseService {
   final FirebaseAuth _auth = FirebaseAuth.instance;

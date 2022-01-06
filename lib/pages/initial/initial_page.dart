@@ -1,9 +1,49 @@
+import 'dart:io';
+import 'dart:convert';
+
 import 'package:anthem/pages/initial/initial_artists_page.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:anthem/animation/fade_animation.dart';
-
+import 'package:dart_twitter_api/twitter_api.dart';
+import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:anthem/globals/globals.dart' as globals;
+import 'package:firebase_auth/firebase_auth.dart';
 
 class InitialPage extends StatelessWidget {
+
+  //Twitter API call TODO: move bearer token to .evn
+  Future<void> getFriends() async {
+    final user = FirebaseAuth.instance.currentUser!;
+    final profile = user.providerData;
+    final uid = profile.last.uid;
+    final response = await http.get(
+      Uri.parse('https://api.twitter.com/1.1/friends/ids.json?user_id=' + uid.toString()),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer ' + dotenv.env['BEARER_TOKEN']!,
+      },
+    );
+
+    Map<String, dynamic> responseJson = jsonDecode(response.body);
+
+    var ids;
+
+    for (var element in responseJson.entries) {
+      if(element.key == "ids"){
+        ids = element.value.toString().replaceAll('[', '').replaceAll(']', '').replaceAll(' ', '').split(",");
+      }
+    }
+
+
+    for (var id in ids){
+      if (globals.artistsMap.containsKey(int.parse(id))){
+        globals.artists.add(globals.artistsMap[int.parse(id)]);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -43,7 +83,9 @@ class InitialPage extends StatelessWidget {
                         shape: new RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(20),
                             )),
-                        onPressed: () {
+                        onPressed: () async {
+                          await getFriends();
+                          debugPrint(globals.artists.toString());
                           Navigator.push(
                             context,
                             MaterialPageRoute(
