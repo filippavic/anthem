@@ -1,10 +1,14 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:anthem/animation/fade_animation.dart';
 import 'package:anthem/pages/home_page.dart';
 import 'package:anthem/globals/globals.dart' as globals;
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
 class InitialArtistsPage extends StatefulWidget {
@@ -30,20 +34,18 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
 
   List<String> _selectedArtists = [];
 
-  void setFavoriteArtists() async {
+  Future<void> setFavoriteArtists() async {
     // var genreCollection = FirebaseFirestore.instance.collection('users').doc(user.email).collection('favoriteArtists');
 
     //If user follows too little artists on Twitter add default list TODO: Default artists list
     if (globals.artists.length < 5){
-      globals.artists = [
-        ['Mariah Carey', 'https://i.scdn.co/image/ab6761610000517461355b9684caa60615698e66', '4iHNK0tOyZPYnBU7nGAgpQ'],
-        ['Wham!', 'https://i.scdn.co/image/cdde1f06ec2ac6defe5d678444a357ce2ac49040', '5lpH0xAS4fVfLkACg9DAuM'],
-        ['Elton John', 'https://i.scdn.co/image/ab6761610000f1780a7388b95df960b5c0da8970', '3PhoLpVuITZKcymswpck5b'],
-        ['Petar Grašo', 'https://i.scdn.co/image/ab6761610000f178494fb8d264ab7a5483db4da1', '1JbDmDlop4Pm4IyJhc22jt'],
-        ['Taylor Swift', 'https://i.scdn.co/image/ab6761610000f1789e3acf1eaf3b8846e836f441', '06HL4z0CvFAxyc27GXpf02'],
-        ['Queen', 'https://i.scdn.co/image/c06971e9ff81696699b829484e3be165f4e64368', '1dfeR4HaWDbWqFHLkxsg1d'],
-        ['ABBA', 'https://i.scdn.co/image/ab6761610000f178118de0c58b11e1fd54b66640', '0LcJLqbBmaGUft1e9Mm8HV']
-      ];
+      globals.artists.add(['Mariah Carey', 'https://i.scdn.co/image/ab6761610000517461355b9684caa60615698e66', '4iHNK0tOyZPYnBU7nGAgpQ']);
+      globals.artists.add(['Wham!', 'https://i.scdn.co/image/cdde1f06ec2ac6defe5d678444a357ce2ac49040', '5lpH0xAS4fVfLkACg9DAuM']);
+      globals.artists.add(['Elton John', 'https://i.scdn.co/image/ab6761610000f1780a7388b95df960b5c0da8970', '3PhoLpVuITZKcymswpck5b']);
+      globals.artists.add(['Petar Grašo', 'https://i.scdn.co/image/ab6761610000f178494fb8d264ab7a5483db4da1', '1JbDmDlop4Pm4IyJhc22jt']);
+      globals.artists.add(['Taylor Swift', 'https://i.scdn.co/image/ab6761610000f1789e3acf1eaf3b8846e836f441', '06HL4z0CvFAxyc27GXpf02']);
+      globals.artists.add(['Queen', 'https://i.scdn.co/image/c06971e9ff81696699b829484e3be165f4e64368', '1dfeR4HaWDbWqFHLkxsg1d']);
+      globals.artists.add(['ABBA', 'https://i.scdn.co/image/ab6761610000f178118de0c58b11e1fd54b66640', '0LcJLqbBmaGUft1e9Mm8HV']);
     }
 
     for (var artist in globals.artists) {
@@ -59,12 +61,28 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
       }
     }
 
-    Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomePage(),
-            ),
-          );
+    // Navigator.push(
+    //         context,
+    //         MaterialPageRoute(
+    //           builder: (context) => HomePage(),
+    //         ),
+    //       );
+  }
+
+  Future<void> getSongs() async {
+    var seed = "";
+    for (var artist in _selectedArtists){
+      seed += ("," + artist[2]);
+    }
+
+    final response = await http.get(
+      Uri.parse('https://api.spotify.com/v1/recommendations?limit=10&market=HR&seed_artists=' + seed + '&seed_genres=classical%2Cdance%2Cpop%2Crock%2Crap&seed_tracks=' + seed),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer ' + dotenv.env['SPOTIFY_TOKEN']!,
+      },
+    );
+
+    debugPrint(response.body.toString());
   }
 
   @override
@@ -77,12 +95,13 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       floatingActionButton: _selectedArtists.isNotEmpty ? FloatingActionButton(
-        onPressed: () {
-          setFavoriteArtists();
+        onPressed: () async {
+          await setFavoriteArtists();
+          await getSongs();
           // Navigator.push(
           //   context,
           //   MaterialPageRoute(
-          //     builder: (context) => HomePage()
+          //     builder: (context) => HomePage(),
           //   ),
           // );
         },
@@ -127,14 +146,14 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
       )
     );
   }
-  
+
   artist(List artist, int index) {
     return GestureDetector(
       onTap: () {
         setState(() {
           if (_selectedArtists.contains(artist[2]))
             _selectedArtists.remove(artist[2]);
-          else 
+          else
             _selectedArtists.add(artist[2]);
         });
       },
@@ -167,7 +186,7 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
                   ],
                 ),
                 Spacer(),
-                _selectedArtists.contains(artist[2]) ? 
+                _selectedArtists.contains(artist[2]) ?
                   Container(
                     padding: EdgeInsets.all(5.0),
                     decoration: BoxDecoration(
