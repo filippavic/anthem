@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
           unselectedItemColor: Colors.white38,
         ),
       ),
-      initialRoute: '/home',
+      initialRoute: '/',
       navigatorKey: _navigator,
       routes: <String, WidgetBuilder>{
         '/' : (context) => WelcomePage(),
