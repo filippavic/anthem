@@ -1,4 +1,6 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,6 +11,7 @@ import 'package:anthem/pages/home_page.dart';
 import 'package:anthem/globals/globals.dart' as globals;
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:anthem/api/spotify_api.dart';
 
 
 class InitialArtistsPage extends StatefulWidget {
@@ -70,19 +73,27 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
   }
 
   Future<void> getSongs() async {
-    var seed = "";
-    for (var artist in _selectedArtists){
-      seed += ("," + artist[2]);
-    }
+    var seed = _selectedArtists.join(',');
+
+    debugPrint("seed" + seed);
+
+    final SpotifyApi spotifyApi = new SpotifyApi();
+    final token = await spotifyApi.getToken();
 
     final response = await http.get(
-      Uri.parse('https://api.spotify.com/v1/recommendations?limit=10&market=HR&seed_artists=' + seed + '&seed_genres=classical%2Cdance%2Cpop%2Crock%2Crap&seed_tracks=' + seed),
+      Uri.parse("https://api.spotify.com/v1/recommendations?limit=10&market=ES&seed_artists=1HY2Jd0NmPuamShAr6KMms,4NHQUGzhtTLFvgF5SZesLK&seed_genres=classical%2Ccountry&seed_tracks=1HY2Jd0NmPuamShAr6KMms"),
       headers: {
-        HttpHeaders.authorizationHeader: 'Bearer ' + dotenv.env['SPOTIFY_TOKEN']!,
+        HttpHeaders.authorizationHeader: 'Bearer ' + token,
       },
     );
+    var decoded = json.decode(response.body);
+    var songs = [];
+    for (var track in decoded["tracks"]){
+      songs.add(track["id"]);
+    };
+    globals.recommendedSongs = songs; //Lista idjeva preporucenih pjesama
 
-    debugPrint(response.body.toString());
+    //TODO: finds songs by id in firestore and display on screen for user to choose from
   }
 
   @override
@@ -98,12 +109,12 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
         onPressed: () async {
           await setFavoriteArtists();
           await getSongs();
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => HomePage(),
-          //   ),
-          // );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePage(),
+            ),
+          );
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -18,3 +18,5 @@ var artistsMap = {
 var artists = [];
 
 var selectedArtists = [];
+
+var recommendedSongs = [];
