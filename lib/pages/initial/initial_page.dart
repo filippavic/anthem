@@ -15,7 +15,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class InitialPage extends StatelessWidget {
 
-  //Twitter API call TODO: move bearer token to .evn
+  //Twitter API call
   Future<void> getFriends() async {
     final user = FirebaseAuth.instance.currentUser!;
     final profile = user.providerData;
