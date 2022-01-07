@@ -44,6 +44,7 @@ dependencies:
   # Fonts and stuff
   font_awesome_flutter: ^9.0.0
   google_fonts: ^2.1.0
+  flutter_feather_icons: ^2.0.0+1
 
   # Components
   bottom_navy_bar: ^5.6.0

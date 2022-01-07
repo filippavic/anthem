@@ -3,7 +3,7 @@ import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import "package:flutter_feather_icons/flutter_feather_icons.dart";
 import 'package:anthem/utils/constants.dart';
 import 'package:anthem/pages/user_page.dart';
 import 'package:anthem/views/home_view.dart';
@@ -21,6 +21,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+      extendBody: true,
       body: buildPages(),
       bottomNavigationBar: buildBottomNavigation(),
   );
@@ -31,6 +32,8 @@ class _HomePageState extends State<HomePage> {
       case 1:
         return LibraryView();
       case 2:
+      return LibraryView();
+      case 3:
         return MapView();
       case 0:
       default:
@@ -39,54 +42,43 @@ class _HomePageState extends State<HomePage> {
   }
 
    Widget buildBottomNavigation() {
-    return BottomNavigationBar(
-        currentIndex: _index,
-        onTap: (index) {
-          setState(() {
-            this._index = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: Constants.textNavBarHome,
+     return Container(
+       decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.transparent, Colors.black87],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          tileMode: TileMode.clamp,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.library_music),
-            label: Constants.textNavBarLibrary,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.pin_drop_outlined),
-            label: Constants.textNavBarMap,
-          )
-        ]
-    );
+        ),
+        child: BottomNavigationBar(
+          // elevation: 0,
+          backgroundColor: Colors.transparent,
+            currentIndex: _index,
+            onTap: (index) {
+              setState(() {
+                this._index = index;
+              });
+            },
+            items: [
+              BottomNavigationBarItem(
+                icon: Padding(padding: EdgeInsets.only(bottom: 5), child: Icon(FeatherIcons.home, size: 20,)),
+                label: Constants.textNavBarHome,
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(padding: EdgeInsets.only(bottom: 5), child: Icon(FeatherIcons.music, size: 20,)),
+                label: Constants.textNavBarLibrary,
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(padding: EdgeInsets.only(bottom: 5), child: Icon(FeatherIcons.barChart2, size: 20,)),
+                label: Constants.textNavBarCharts,
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(padding: EdgeInsets.only(bottom: 5), child: Icon(FeatherIcons.mapPin, size: 20,)),
+                label: Constants.textNavBarMap,
+              )
+            ]
+        )
+     );
   }
-
-  // Widget buildBottomNavigation() {
-  //   return BottomNavyBar(
-  //     iconSize: 20,
-  //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //     selectedIndex: index,
-  //     onItemSelected: (index) => setState(() => this.index = index),
-  //     backgroundColor: Constants.kPrimaryDarkBackgroundColor,
-  //     showElevation: true,
-  //     items: <BottomNavyBarItem>[
-  //       BottomNavyBarItem(
-  //         icon: FaIcon(FontAwesomeIcons.user),
-  //         title: Text("User"),
-  //         activeColor: Colors.green,
-  //         inactiveColor: Colors.grey.shade700,
-  //         textAlign: TextAlign.center
-  //       ),
-  //       BottomNavyBarItem(
-  //         icon: FaIcon(FontAwesomeIcons.music),
-  //         title: Text("Music"),
-  //         activeColor: Colors.purple,
-  //         inactiveColor: Colors.grey.shade700,
-  //         textAlign: TextAlign.center
-  //       ),
-  //     ],
-  //   );
-  // }
 }
