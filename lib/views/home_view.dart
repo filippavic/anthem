@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'package:anthem/animation/fade_animation.dart';
+import 'package:anthem/services/geolocation.dart';
 import 'package:anthem/services/weather_api.dart';
 import 'package:anthem/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
+import "package:flutter_feather_icons/flutter_feather_icons.dart";
 import 'package:anthem/utils/chart_data.dart';
+import 'package:geolocator/geolocator.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -43,13 +46,20 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void _getCurrentWeather() async {
-    // TODO: Change hardcoded city to coordinates
-    final response = await WeatherApi().fetchWeather("Zagreb");
+    Position? currentPosition;
 
-    if (this.mounted) {
-      setState(() {
-        _currentWeather = response['currentWeather'].toString().toLowerCase();
-      });
+    await determinePosition().then((value) => {
+      currentPosition = value
+    }).onError((error, stackTrace) => {});
+
+    if (currentPosition != null) {
+      final response = await WeatherApi().fetchWeatherByCoordinates(currentPosition!.latitude.toString(), currentPosition!.longitude.toString());
+
+      if (this.mounted) {
+        setState(() {
+          _currentWeather = response['currentWeather'].toString().toLowerCase();
+        });
+      }
     }
   }
 
@@ -99,7 +109,7 @@ class _HomeViewState extends State<HomeView> {
                           ),
                           Row(
                             children: [
-                              Icon(Icons.settings, color: Colors.white),
+                              Icon(FeatherIcons.settings, color: Colors.white, size: 22),
                             ],
                           )
                         ],
