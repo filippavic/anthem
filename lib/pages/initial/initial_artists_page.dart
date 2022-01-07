@@ -3,6 +3,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:anthem/pages/initial/initial_songs_page.dart';
+import 'package:anthem/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -210,22 +212,22 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
         onPressed: () async {
           await setFavoriteArtists();
           await getSongs();
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => HomePage(),
-          //   ),
-          // );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => InitialSongsPage(),
+            ),
+          );
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${_selectedArtists.length}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.greenAccent)),
+            Text('${_selectedArtists.length}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
             SizedBox(width: 2),
-            Icon(Icons.arrow_forward_ios, size: 18, color: Colors.greenAccent,),
+            Icon(Icons.arrow_forward_ios, size: 18, color: Colors.white),
           ],
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Constants.kPrimaryColor,
       ) : null,
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -275,7 +277,7 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.0),
           border: Border.all(
-            color: _selectedArtists.contains(artist[2]) ? Colors.greenAccent : Colors.greenAccent.withOpacity(0),
+            color: _selectedArtists.contains(artist[2]) ? Constants.kPrimaryColor : Constants.kPrimaryColor.withOpacity(0),
             width: 2.0,
           ),
           color: _selectedArtists.contains(artist[2]) ? Colors.grey.shade900 : Colors.grey.shade900,
@@ -302,10 +304,10 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
                   Container(
                     padding: EdgeInsets.all(5.0),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Constants.kPrimaryColor,
                       borderRadius: BorderRadius.circular(10.0),
                     ),
-                    child: Icon(Icons.check, color: Colors.greenAccent, size: 20,)
+                    child: Icon(Icons.check, color: Colors.white, size: 20,)
                   ) : 
                   SizedBox()
               ],

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 
 import 'package:anthem/pages/initial/initial_artists_page.dart';
+import 'package:anthem/utils/constants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:anthem/animation/fade_animation.dart';
@@ -55,20 +56,20 @@ class InitialPage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Expanded(  
-              flex: 3,
+              flex: 5,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 100),
                 child: FadeAnimation(0.5, Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    Text("First, we need to get to know you.", style: TextStyle(fontSize: 50, fontWeight: FontWeight.w800, color: Colors.white)),
+                    Text("First, we need to get to know you.", style: TextStyle(fontSize: 45, fontWeight: FontWeight.w800, color: Colors.white)),
                   ]
                 ))
               )
             ),
             Expanded(
-              flex: 2,
+              flex: 1,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
@@ -76,13 +77,13 @@ class InitialPage extends StatelessWidget {
                   children: <Widget>[
                     SizedBox(
                       width: double.infinity,
-                      height: 45,
+                      height: 50,
                       child: FadeAnimation(0.9, ElevatedButton(
                         child: Text('Continue'),
-                        style: ElevatedButton.styleFrom(primary: Colors.grey.shade900, onPrimary: Colors.greenAccent,
+                        style: ElevatedButton.styleFrom(primary: Constants.kPrimaryColor, onPrimary: Colors.white,
                         shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(20),
-                            )),
+                          borderRadius: new BorderRadius.circular(10),
+                        )),
                         onPressed: () async {
                           await getFriends();
                           debugPrint(globals.artists.toString());

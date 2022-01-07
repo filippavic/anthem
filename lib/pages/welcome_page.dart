@@ -21,11 +21,11 @@ class WelcomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Expanded(  
-              flex: 3,
+              flex: 5,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 100),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(Constants.title, style: TextStyle(fontSize: 62, fontWeight: FontWeight.w800, color: Colors.white)),
@@ -44,7 +44,7 @@ class WelcomePage extends StatelessWidget {
               )
             ),
             Expanded(
-              flex: 2,
+              flex: 1,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
@@ -55,13 +55,13 @@ class WelcomePage extends StatelessWidget {
                     :
                     SizedBox(
                       width: double.infinity,
-                      height: 45,
+                      height: 50,
                       child: ElevatedButton(                   
                         child: Text('Continue'),
-                        style: ElevatedButton.styleFrom(primary: Colors.grey.shade900, onPrimary: Colors.white,
+                        style: ElevatedButton.styleFrom(primary: Constants.kPrimaryColor, onPrimary: Colors.white,
                         shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(20),
-                            )),
+                          borderRadius: new BorderRadius.circular(10),
+                        )),
                         onPressed: () {
                           // Navigator.pushReplacementNamed(context, "/home");
 

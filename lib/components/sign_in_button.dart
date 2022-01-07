@@ -24,7 +24,7 @@ class _SignInButtonState extends State<SignInButton> {
     Size size = MediaQuery.of(context).size;
     return SizedBox(
             width: double.infinity,
-            height: 45,
+            height: 50,
             child: ElevatedButton.icon(
               icon: this.widget.faIcon,
               onPressed: () async {
@@ -41,10 +41,10 @@ class _SignInButtonState extends State<SignInButton> {
                 style: TextStyle(
                     color: Constants.kTextColor, fontWeight: FontWeight.bold),
               ),
-              style: ElevatedButton.styleFrom(primary: Colors.grey.shade900, onPrimary: Constants.kTextColor,
-                        shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(15),
-                            )),
+              style: ElevatedButton.styleFrom(primary: Constants.kPrimaryColor, onPrimary: Colors.white,
+              shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(10),
+              )),
             ),
           );
   }
