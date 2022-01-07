@@ -46,7 +46,6 @@ class SpotifyApi {
   }
 
 
-  // Get a list of 10 tracks from a query.
   Future<String> getToken() async {
     bool tokenIsValid = await _validateToken();
 
