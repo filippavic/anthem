@@ -1,4 +1,5 @@
 import 'package:anthem/pages/user_page.dart';
+import 'package:anthem/views/charts_view.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -32,7 +33,7 @@ class _HomePageState extends State<HomePage> {
       case 1:
         return LibraryView();
       case 2:
-      return LibraryView();
+        return ChartsView();
       case 3:
         return MapView();
       case 0:

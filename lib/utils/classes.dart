@@ -30,3 +30,20 @@ class Song {
   final double acousticness;
   final double valence;
 }
+
+
+class SongRating {
+  const SongRating({
+    required this.songID,
+    required this.name,
+    required this.artists,
+    required this.ratings,
+    this.avgRating
+  });
+
+  final String songID;
+  final String name;
+  final List<dynamic> artists;
+  final List<dynamic> ratings;
+  final double? avgRating;
+}

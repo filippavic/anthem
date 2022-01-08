@@ -52,7 +52,7 @@ class _SongDetailsPageState extends State<SongDetailsPage> {
   }
 
   _getSongRatingForUser() async {
-    var document = FirebaseFirestore.instance.collection('ratings').doc(widget.songID).collection('userRatings').doc(user.email);
+    var document = FirebaseFirestore.instance.collection('users').doc(user.email).collection('ratedSongs').doc(widget.songID);
 
     document.get().then((data) => {
       setState(() { _songRating = (data['rating'] as int).toDouble();})
@@ -62,11 +62,65 @@ class _SongDetailsPageState extends State<SongDetailsPage> {
   }
 
 
-  void saveRating() {
-    FirebaseFirestore.instance.collection('ratings').doc(widget.songID).collection('userRatings').doc(user.email).set({
+  void saveRating() async {
+    // Save rating for the user
+    FirebaseFirestore.instance.collection('users').doc(user.email).collection('ratedSongs').doc(widget.songID).set({
       'rating': _songRating!.toInt(),
       'dateRated': DateTime.now()
     }).then((value) => setState(() { _ratingChange = false;}));
+
+    // Save rating globally
+    DateTime now = DateTime.now();
+    DateTime date = DateTime(now.year, now.month, now.day);
+
+    var query = FirebaseFirestore.instance.collection('ratings').where('date', isEqualTo: date).limit(1).get();
+
+    query.then((data) async {
+      var d = data.docs;
+      if (d.isEmpty) {
+        // This date doesn't exists
+        var batch = FirebaseFirestore.instance.batch();
+
+        var newGroup = FirebaseFirestore.instance.collection('ratings').doc();
+        batch.set(newGroup, {'date': date});
+
+        var newMember = newGroup.collection('songs').doc(_song!.songID);
+        batch.set(newMember, {
+          'name': _song!.name,
+          'artists': _song!.artists,
+          'ratings': _songRating!.toInt()
+        });
+
+        batch.commit().catchError((err) {
+          print(err);
+        });
+      }
+      else {
+        // This date is already in the databse
+        var listDocs = d.map((DocumentSnapshot docSnapshot) {
+          return docSnapshot.id;
+        }).toList();
+        var querySong = await FirebaseFirestore.instance.collection('ratings').doc(listDocs[0]).collection('songs').doc(widget.songID).get();
+  
+        if (querySong.data() != null) {
+          // So is the song
+          var ratings = querySong.data()!['ratings'] as List<dynamic>;
+          ratings.add(_songRating!.toInt());
+          FirebaseFirestore.instance.collection('ratings').doc(listDocs[0]).collection('songs').doc(widget.songID).update({
+            'ratings': ratings
+          });
+        }
+        else {
+          // The song isn't in the database
+          var ratings = [_songRating!.toInt()];
+          FirebaseFirestore.instance.collection('ratings').doc(listDocs[0]).collection('songs').doc(widget.songID).set({
+            'name': _song!.name,
+            'artists': _song!.artists,
+            'ratings': ratings
+          });
+        }
+      }
+    });
   }
 
   @override
