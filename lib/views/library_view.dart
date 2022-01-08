@@ -233,7 +233,7 @@ class _LibraryViewState extends State<LibraryView> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => SongDetailsPage(),
+                                        builder: (context) => SongDetailsPage("1sFWEpf1aPYN576LS1aa4Y"),
                                       ),
                                     );
                                   },
@@ -267,7 +267,7 @@ class _LibraryViewState extends State<LibraryView> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => SongDetailsPage(),
+                                        builder: (context) => SongDetailsPage("1sFWEpf1aPYN576LS1aa4Y"),
                                       ),
                                     );
                                   },
@@ -301,7 +301,7 @@ class _LibraryViewState extends State<LibraryView> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => SongDetailsPage(),
+                                        builder: (context) => SongDetailsPage(songs[2][2]),
                                       ),
                                     );
                                   },
@@ -335,7 +335,7 @@ class _LibraryViewState extends State<LibraryView> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => SongDetailsPage(),
+                                        builder: (context) => SongDetailsPage("1m81kKiAMphhyNvuazFoui"),
                                       ),
                                     );
                                   },
