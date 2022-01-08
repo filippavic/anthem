@@ -1,7 +1,8 @@
 import 'package:anthem/utils/classes.dart';
 import 'package:anthem/utils/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:smooth_star_rating/smooth_star_rating.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -20,7 +21,8 @@ class _SongDetailsPageState extends State<SongDetailsPage> {
 
   Song? _song;
 
-  int? _songRating;
+  double? _songRating;
+  bool _ratingChange = false;
 
   @override
   void initState() {
@@ -53,8 +55,18 @@ class _SongDetailsPageState extends State<SongDetailsPage> {
     var document = FirebaseFirestore.instance.collection('ratings').doc(widget.songID).collection('userRatings').doc(user.email);
 
     document.get().then((data) => {
-      setState(() { _songRating = data['rating'];})
+      setState(() { _songRating = (data['rating'] as int).toDouble();})
+    }).catchError((error) {
+      setState(() { _songRating = 0.0;});
     });
+  }
+
+
+  void saveRating() {
+    FirebaseFirestore.instance.collection('ratings').doc(widget.songID).collection('userRatings').doc(user.email).set({
+      'rating': _songRating!.toInt(),
+      'dateRated': DateTime.now()
+    }).then((value) => setState(() { _ratingChange = false;}));
   }
 
   @override
@@ -87,19 +99,31 @@ class _SongDetailsPageState extends State<SongDetailsPage> {
                           textAlign: TextAlign.center,
                         ) : CircularProgressIndicator(strokeWidth:2.0, color: Colors.white),
                         SizedBox(height: 50),
-                        SmoothStarRating(
-                          allowHalfRating: false,
-                          onRated: (v) {
-                            },
-                          starCount: 5,
-                          rating: 3.0,
-                          size: 40.0,
-                          isReadOnly:true,
-                          color: Constants.kQuartaryColor,
-                          borderColor: Colors.grey.shade500,
-                          spacing:0.0
+                        RatingBar(
+                        initialRating: _songRating != null ? _songRating! : 0.0,
+                        direction: Axis.horizontal,
+                        allowHalfRating: false,
+                        itemCount: 5,
+                        ratingWidget: RatingWidget(
+                          full: Icon(FeatherIcons.star, color: Constants.kQuartaryColor,),
+                          half: Icon(FeatherIcons.star, color: Constants.kQuartaryColor,),
+                          empty: Icon(FeatherIcons.star, color: Colors.white24),
                         ),
-                        SizedBox(height: 10),
+                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        onRatingUpdate: (rating) {
+                          if (_songRating != null) {
+                            if (_songRating != rating) {
+                              setState(() { _songRating = rating;});
+                              setState(() { _ratingChange = true;});
+                            }
+                          }
+                          else {
+                            setState(() { _songRating = rating;});
+                            setState(() { _ratingChange = true;});
+                          }
+                        },
+                        ),
+                        SizedBox(height: 15),
                         Text(
                           "My rating",
                           style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade500),
@@ -254,14 +278,12 @@ class _SongDetailsPageState extends State<SongDetailsPage> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(                   
-                  child: Text('Save changes to rating'),
-                  style: ElevatedButton.styleFrom(primary: Constants.kQuartaryColor, onPrimary: Colors.white,
+                  child: Text('Save rating'),
+                  style: ElevatedButton.styleFrom(primary: _ratingChange ? Constants.kQuartaryColor : Colors.transparent, onPrimary: Colors.white, onSurface: Colors.white24,
                   shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(10),
-                        // side: BorderSide(color: Constants.kPrimaryColor, width: 2)
                       )),
-                  onPressed: () {
-                  },
+                  onPressed: !_ratingChange ? null : saveRating,
                 )
               )
             )

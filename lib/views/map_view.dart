@@ -47,7 +47,7 @@ class _MapViewState extends State<MapView> {
     List<DocumentSnapshot> templist;
     List<Map<dynamic, dynamic>> list = [];
 
-    Query query = FirebaseFirestore.instance.collection('users').where('mail', isNotEqualTo: user.email).limit(10);
+    Query query = FirebaseFirestore.instance.collection('users').where(FieldPath.documentId, isNotEqualTo: user.email).limit(10);
     QuerySnapshot collectionSnapshot = await query.get();
 
     templist = collectionSnapshot.docs;

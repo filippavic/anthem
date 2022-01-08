@@ -49,9 +49,9 @@ dependencies:
   # Components
   bottom_navy_bar: ^5.6.0
   fl_chart: ^0.40.6
-  smooth_star_rating: ^1.1.1
   flutter_map: ^0.14.0
   latlong2: ^0.8.1
+  flutter_rating_bar: ^4.0.0
 
   # Location
   geolocator: ^8.0.1
