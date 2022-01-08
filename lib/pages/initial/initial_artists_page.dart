@@ -27,24 +27,12 @@ class InitialArtistsPage extends StatefulWidget {
 class _InitialArtistsPageState extends State<InitialArtistsPage> {
   final user = FirebaseAuth.instance.currentUser!;
 
-
-
-  // List<dynamic> _artists =[
-  //   ['Mariah Carey', 'https://i.scdn.co/image/ab6761610000517461355b9684caa60615698e66', '4iHNK0tOyZPYnBU7nGAgpQ'],
-  //   ['Wham!', 'https://i.scdn.co/image/cdde1f06ec2ac6defe5d678444a357ce2ac49040', '5lpH0xAS4fVfLkACg9DAuM'],
-  //   ['Elton John', 'https://i.scdn.co/image/ab6761610000f1780a7388b95df960b5c0da8970', '3PhoLpVuITZKcymswpck5b'],
-  //   ['Petar Grašo', 'https://i.scdn.co/image/ab6761610000f178494fb8d264ab7a5483db4da1', '1JbDmDlop4Pm4IyJhc22jt'],
-  //   ['Taylor Swift', 'https://i.scdn.co/image/ab6761610000f1789e3acf1eaf3b8846e836f441', '06HL4z0CvFAxyc27GXpf02'],
-  //   ['Queen', 'https://i.scdn.co/image/c06971e9ff81696699b829484e3be165f4e64368', '1dfeR4HaWDbWqFHLkxsg1d'],
-  //   ['ABBA', 'https://i.scdn.co/image/ab6761610000f178118de0c58b11e1fd54b66640', '0LcJLqbBmaGUft1e9Mm8HV']
-  // ];
-
   List<String> _selectedArtists = [];
 
   Future<void> setFavoriteArtists() async {
     // var genreCollection = FirebaseFirestore.instance.collection('users').doc(user.email).collection('favoriteArtists');
 
-    //If user follows too little artists on Twitter add default list TODO: Default artists list
+    //If user follows too little artists on Twitter add default list
     if (globals.artists.length < 5){
       globals.artists.add(['Mariah Carey', 'https://i.scdn.co/image/ab6761610000517461355b9684caa60615698e66', '4iHNK0tOyZPYnBU7nGAgpQ']);
       globals.artists.add(['Wham!', 'https://i.scdn.co/image/cdde1f06ec2ac6defe5d678444a357ce2ac49040', '5lpH0xAS4fVfLkACg9DAuM']);
@@ -54,28 +42,9 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
       globals.artists.add(['Queen', 'https://i.scdn.co/image/c06971e9ff81696699b829484e3be165f4e64368', '1dfeR4HaWDbWqFHLkxsg1d']);
       globals.artists.add(['ABBA', 'https://i.scdn.co/image/ab6761610000f178118de0c58b11e1fd54b66640', '0LcJLqbBmaGUft1e9Mm8HV']);
     }
-
-    for (var artist in globals.artists) {
-      if (!_selectedArtists.contains(artist[2])) {
-        // genreCollection.doc(artist[2]).delete();
-      }
-      else {
-        // genreCollection.doc(artist[2]).set({
-        //   'artistName': artist[0],
-        //   'artistImageUrl': artist[1],
-        //   'artistId': artist[2]
-        // });
-      }
-    }
-
-    // Navigator.push(
-    //         context,
-    //         MaterialPageRoute(
-    //           builder: (context) => HomePage(),
-    //         ),
-    //       );
   }
 
+  // Call Spotify API and get info for all songs that have been recommended
   Future<void> getSongsInfo() async {
     final SpotifyApi spotifyApi = new SpotifyApi();
     final token = await spotifyApi.getToken();
@@ -136,6 +105,9 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
     print(globals.recommendedSongsInfo);
   }
 
+
+  // Call Spotify API and get recommended songs based on selected artists
+  // TODO: Limit selection to 5 artists because that is the API max
   Future<void> getSongs() async {
     final SpotifyApi spotifyApi = new SpotifyApi();
     final token = await spotifyApi.getToken();
@@ -157,38 +129,6 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
     globals.recommendedSongs = songs; //Lista idjeva preporucenih pjesama
     print(globals.recommendedSongs);
 
-
-
-      // for (var track in decoded["tracks"]){
-      //   songs.add(track["id"]);
-      // };
-      // FirebaseFirestore.instance
-      //     .collection('songs')
-      //     .doc('00zsA04RxdnuLikoiBvbz1')
-      //     .get()
-      //     .then((DocumentSnapshot documentSnapshot) {
-      //   if (documentSnapshot.exists) {
-      //     print('Song exists in the database');
-      //     songInfo = documentSnapshot;
-      //     print(songInfo.data());
-      //   }
-      //   else {
-      //     print("Song does not exist in database");
-      //   }
-      // });
-
-
-
-
-
-      // FirebaseFirestore.instance
-      //     .collection('users')
-      //     .doc(user.email)
-      //     .update({'favoriteSongs': songInfo});
-
-    // }
-
-    //TODO: finds songs by id in firestore and display on screen for user to choose from
   }
 
   @override

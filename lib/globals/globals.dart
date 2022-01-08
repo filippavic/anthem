@@ -15,10 +15,10 @@ var artistsMap = {
   1409798257: ['BTS', 'https://i.scdn.co/image/ab6761610000517482a5d58059f81867b871d8b6', '3Nrfpe0tUJi4K4DXYWgMUX']
 };
 
-var artists = [];
+var artists = []; // All artists user is following on Twitter
 
-var selectedArtists = [];
+var selectedArtists = []; // Artists from Twitter selected on screen
 
-var recommendedSongs = [];
+var recommendedSongs = []; // IDs of recommended songs
 
-var recommendedSongsInfo = {};
+var recommendedSongsInfo = {}; // Map of recommended songs (formatted like songID : {songInfo})
