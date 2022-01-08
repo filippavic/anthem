@@ -26,7 +26,7 @@ class InitialArtistsPage extends StatefulWidget {
 
 class _InitialArtistsPageState extends State<InitialArtistsPage> {
   final user = FirebaseAuth.instance.currentUser!;
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
 
 
   // List<dynamic> _artists =[
@@ -76,34 +76,12 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
     //       );
   }
 
-  Future<void> getSongs() async {
-    var seed = _selectedArtists.join(',');
-
-    debugPrint("seed" + seed);
-    print(_selectedArtists[0].toString());
-
+  Future<void> getSongsInfo() async {
     final SpotifyApi spotifyApi = new SpotifyApi();
     final token = await spotifyApi.getToken();
 
-    final response = await http.get(
-      Uri.parse("https://api.spotify.com/v1/recommendations?limit=10&market=HR&seed_artists=" + _selectedArtists[0].toString()  //TODO: neki problem kaj nece više artista od jedanput, radilo je ali je porestalo, nemam ideje, trebalo bi iti seed umjesto selArt
-          + "seed1HY2Jd0NmPuamShAr6KMms,6jJ0s89eD6GaHleKKya26X" + "&seed_genres=classical%2Ccountry&seed_tracks=" + _selectedArtists[0].toString()),
-      headers: {
-        HttpHeaders.authorizationHeader: 'Bearer ' + token,
-      },
-    );
-    var decoded = json.decode(response.body);
-    var songs = [];
-    for (var track in decoded["tracks"]){
-      songs.add(track["id"]);
-    };
-
-    globals.recommendedSongs = songs; //Lista idjeva preporucenih pjesama
-    print(songs);
-
-    // ---- Writing songs to Firestore BEGIN ----
-    DocumentSnapshot songInfo;
-    for (var song in songs) {
+    var songs = {};
+    for (var song in globals.recommendedSongs) {
       final responseTrack = await http.get(
         Uri.parse("https://api.spotify.com/v1/tracks/" + song),
         headers: {
@@ -119,16 +97,15 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
       var decodedTrack = json.decode(responseTrack.body);
       var decodedFeatures = json.decode(responseFeatures.body);
       var artistsIds = [];
-      for (var artist in decodedTrack["artists"]){
+      for (var artist in decodedTrack["artists"]) {
         artistsIds.add(artist["id"]);
       }
       var artists = [];
-      for (var artist in decodedTrack["artists"]){
+      for (var artist in decodedTrack["artists"]) {
         artists.add(artist["name"]);
       }
       var year = decodedTrack["album"]["release_date"].split("-")[0];
-      var songs = [];
-      songs.add({"acousticness": decodedFeatures["acousticness"],
+      songs[decodedTrack["id"]] = {"acousticness": decodedFeatures["acousticness"],
         "album": decodedTrack["album"]["name"],
         "album_id": decodedTrack["album"]["id"],
         "artist_ids": artistsIds,
@@ -145,26 +122,42 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
         "loudness": decodedFeatures["loudness"],
         "mode": decodedFeatures["mode"],
         "name": decodedTrack["name"],
-        "release_date": decodedTrack["release_date"],
+        "release_date": decodedTrack["album"]["release_date"],
         "speechiness": decodedFeatures["speechiness"],
         "tempo": decodedFeatures["tempo"],
         "time_signature": decodedFeatures["time_signature"],
         "track_number": decodedTrack["track_number"],
         "valence": decodedFeatures["valence"],
         "year": year
-      });
-      for(var song in songs){
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.email)
-            .collection('favoriteSongs')
-            .doc(decodedTrack["id"])
-            .set(song);
-        FirebaseFirestore.instance
-            .collection('songs')
-            .add(song);
-      }
-      // ---- Writing songs to Firestore END ----
+      };
+    }
+
+    globals.recommendedSongsInfo = songs;
+    print(globals.recommendedSongsInfo);
+  }
+
+  Future<void> getSongs() async {
+    final SpotifyApi spotifyApi = new SpotifyApi();
+    final token = await spotifyApi.getToken();
+
+    var seed = _selectedArtists.join("%2C");
+    final response = await http.get(
+      Uri.parse("https://api.spotify.com/v1/recommendations?limit=10&market=HR&seed_artists=" + seed),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer ' + token,
+      },
+    );
+    print(response.statusCode);
+    var decoded = json.decode(response.body);
+    var songs = [];
+    for (var track in decoded["tracks"]){
+      songs.add(track["id"]);
+    }
+
+    globals.recommendedSongs = songs; //Lista idjeva preporucenih pjesama
+    print(globals.recommendedSongs);
+
+
 
       // for (var track in decoded["tracks"]){
       //   songs.add(track["id"]);
@@ -183,7 +176,7 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
       //     print("Song does not exist in database");
       //   }
       // });
-    }
+
 
 
 
@@ -193,7 +186,6 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
       //     .doc(user.email)
       //     .update({'favoriteSongs': songInfo});
 
-      print("done");
     // }
 
     //TODO: finds songs by id in firestore and display on screen for user to choose from
@@ -212,6 +204,7 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
         onPressed: () async {
           await setFavoriteArtists();
           await getSongs();
+          await getSongsInfo();
           Navigator.push(
             context,
             MaterialPageRoute(

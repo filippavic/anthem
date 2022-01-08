@@ -1,4 +1,4 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -13,6 +13,8 @@ import 'package:anthem/globals/globals.dart' as globals;
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:anthem/api/spotify_api.dart';
+import 'package:anthem/globals/globals.dart' as globals;
+
 
 
 class InitialSongsPage extends StatefulWidget {
@@ -25,8 +27,86 @@ class InitialSongsPage extends StatefulWidget {
 
 class _InitialSongsPageState extends State<InitialSongsPage> {
   final user = FirebaseAuth.instance.currentUser!;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  List<String> _selectedSongs = [];
+  // var songs = [];
+  final List<String> _selectedSongs = [];
+
+  // Future<void> getSongInfo() async {
+  //   final SpotifyApi spotifyApi = new SpotifyApi();
+  //   final token = await spotifyApi.getToken();
+  //
+  //   for (var song in globals.recommendedSongsInfo) {
+  //     final responseTrack = await http.get(
+  //       Uri.parse("https://api.spotify.com/v1/tracks/" + song),
+  //       headers: {
+  //         HttpHeaders.authorizationHeader: 'Bearer ' + token,
+  //       },
+  //     );
+  //     final responseFeatures = await http.get(
+  //       Uri.parse("https://api.spotify.com/v1/audio-features/" + song),
+  //       headers: {
+  //         HttpHeaders.authorizationHeader: 'Bearer ' + token,
+  //       },
+  //     );
+  //     var decodedTrack = json.decode(responseTrack.body);
+  //     var decodedFeatures = json.decode(responseFeatures.body);
+  //     var artistsIds = [];
+  //     for (var artist in decodedTrack["artists"]) {
+  //       artistsIds.add(artist["id"]);
+  //     }
+  //     var artists = [];
+  //     for (var artist in decodedTrack["artists"]) {
+  //       artists.add(artist["name"]);
+  //     }
+  //     var year = decodedTrack["album"]["release_date"].split("-")[0];
+  //     songs.add({"acousticness": decodedFeatures["acousticness"],
+  //       "album": decodedTrack["album"]["name"],
+  //       "album_id": decodedTrack["album"]["id"],
+  //       "artist_ids": artistsIds,
+  //       "artists": artists,
+  //       "danceability": decodedFeatures["danceability"],
+  //       "disc_number": decodedTrack["disc_number"],
+  //       "duration_ms": decodedTrack["duration_ms"],
+  //       "energy": decodedFeatures["energy"],
+  //       "explicit": decodedTrack["explicit"],
+  //       "id": decodedTrack["id"],
+  //       "instrumentalness": decodedFeatures["instrumentalness"],
+  //       "key": decodedFeatures["key"],
+  //       "liveness": decodedFeatures["liveness"],
+  //       "loudness": decodedFeatures["loudness"],
+  //       "mode": decodedFeatures["mode"],
+  //       "name": decodedTrack["name"],
+  //       "release_date": decodedTrack["release_date"],
+  //       "speechiness": decodedFeatures["speechiness"],
+  //       "tempo": decodedFeatures["tempo"],
+  //       "time_signature": decodedFeatures["time_signature"],
+  //       "track_number": decodedTrack["track_number"],
+  //       "valence": decodedFeatures["valence"],
+  //       "year": year
+  //     });
+  // }
+  // }
+
+  Future<void> saveSongs() async {
+    // ---- Writing songs to Firestore BEGIN ----
+    for (var song in globals.recommendedSongsInfo.values) {
+      print("song: " + song.toString());
+      if(_selectedSongs.contains(song["id"])){
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.email)
+            .collection('favoriteSongs')
+            .doc(song["id"])
+            .set(song);
+      }
+      FirebaseFirestore.instance
+          .collection('songs')
+          .doc(song["id"])
+          .set(song);
+    }
+    // ---- Writing songs to Firestore END ----
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +120,7 @@ class _InitialSongsPageState extends State<InitialSongsPage> {
       floatingActionButton: _selectedSongs.isNotEmpty ? FloatingActionButton(
         onPressed: () async {
           // await setFavoriteArtists();
-          // await getSongs();
+          await saveSongs();
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -125,9 +205,9 @@ class _InitialSongsPageState extends State<InitialSongsPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Song name", style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
+                        Text(globals.recommendedSongsInfo[songID]["name"], style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
                         SizedBox(height: 3,),
-                        Text("Artist name", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300))
+                        Text(globals.recommendedSongsInfo[songID]["artists"].join(", "), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300))
                       ],
                     ),
                   ],

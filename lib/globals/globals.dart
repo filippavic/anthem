@@ -20,3 +20,5 @@ var artists = [];
 var selectedArtists = [];
 
 var recommendedSongs = [];
+
+var recommendedSongsInfo = {};
