@@ -2,6 +2,7 @@ import 'package:anthem/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/services.dart';
 import 'package:anthem/pages/home_page.dart';
 import 'package:anthem/pages/welcome_page.dart';
 import 'package:anthem/pages/initial/initial_page.dart';
@@ -23,13 +24,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
       title: 'Anthem',
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.black,
         fontFamily: "Inter",
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
-          backgroundColor: Color(0x00ffffff),
+          backgroundColor: Colors.transparent,
           type: BottomNavigationBarType.fixed,
           selectedLabelStyle: TextStyle(
             fontSize: 12,
@@ -41,7 +46,7 @@ class MyApp extends StatelessWidget {
           unselectedItemColor: Colors.white38,
         ),
       ),
-      initialRoute: '/',
+      initialRoute: '/home',
       navigatorKey: _navigator,
       routes: <String, WidgetBuilder>{
         '/' : (context) => WelcomePage(),

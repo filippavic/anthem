@@ -1,13 +1,61 @@
+import 'package:anthem/utils/classes.dart';
 import 'package:anthem/utils/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:smooth_star_rating/smooth_star_rating.dart'; 
+import 'package:smooth_star_rating/smooth_star_rating.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SongDetailsPage extends StatefulWidget {
+  final String songID;
+  const SongDetailsPage(this.songID);
+
   @override
   _SongDetailsPageState createState() => _SongDetailsPageState();
 }
 
 class _SongDetailsPageState extends State<SongDetailsPage> {
+
+  // User data 
+  final user = FirebaseAuth.instance.currentUser!;
+
+  Song? _song;
+
+  int? _songRating;
+
+  @override
+  void initState() {
+    _getSongDetails();
+    _getSongRatingForUser();
+    super.initState();
+  }
+
+  _getSongDetails() async {
+    Song song;
+
+    var document = FirebaseFirestore.instance.collection('songs').doc(widget.songID);
+
+    document.get().then((data) => {
+      setState(() { _song = Song(
+        songID: widget.songID,
+        name: data['name'],
+        album: data['album'],
+        artists: data['artists'],
+        releaseDate: data['release_date'],
+        energy: data['energy'],
+        acousticness: data['acousticness'],
+        valence: data['valence']
+      );    
+      })
+    });
+  }
+
+  _getSongRatingForUser() async {
+    var document = FirebaseFirestore.instance.collection('ratings').doc(widget.songID).collection('userRatings').doc(user.email);
+
+    document.get().then((data) => {
+      setState(() { _songRating = data['rating'];})
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,22 +73,26 @@ class _SongDetailsPageState extends State<SongDetailsPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
                       children: [
+                        _song != null ?
                         Text(
-                          "Song title",
+                          _song!.name,
                           style: TextStyle(fontSize: 32, fontWeight: FontWeight.w800, color: Colors.white),
-                        ),
+                          textAlign: TextAlign.center,
+                        ) : CircularProgressIndicator(strokeWidth:2.0, color: Colors.white),
                         SizedBox(height: 20),
+                        _song != null ?
                         Text(
-                          "Song artist",
+                          _song!.artists.join(","),
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
-                        ),
+                          textAlign: TextAlign.center,
+                        ) : CircularProgressIndicator(strokeWidth:2.0, color: Colors.white),
                         SizedBox(height: 50),
                         SmoothStarRating(
                           allowHalfRating: false,
                           onRated: (v) {
                             },
                           starCount: 5,
-                          rating: 3,
+                          rating: 3.0,
                           size: 40.0,
                           isReadOnly:true,
                           color: Constants.kQuartaryColor,
@@ -73,10 +125,11 @@ class _SongDetailsPageState extends State<SongDetailsPage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            _song != null ?
                             Text(
-                              "This is a Great Album",
+                              _song!.album,
                               style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Colors.white)
-                            ),
+                            ) : CircularProgressIndicator(strokeWidth:2.0, color: Colors.white),
                             SizedBox(height: 5,),
                             Text(
                               "Album Name",
@@ -96,10 +149,11 @@ class _SongDetailsPageState extends State<SongDetailsPage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            _song != null ?
                             Text(
-                              "20.11.1995.",
+                              _song!.releaseDate,
                               style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Colors.white)
-                            ),
+                            ) : CircularProgressIndicator(strokeWidth:2.0, color: Colors.white),
                             SizedBox(height: 5,),
                             Text(
                               "Release Date",
@@ -128,10 +182,11 @@ class _SongDetailsPageState extends State<SongDetailsPage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            _song != null ?
                             Text(
-                              "0.3",
+                              _song!.energy.toStringAsFixed(3),
                               style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Colors.white)
-                            ),
+                            ) : CircularProgressIndicator(strokeWidth:2.0, color: Colors.white),
                             SizedBox(height: 5,),
                             Text(
                               "Energy",
@@ -151,10 +206,11 @@ class _SongDetailsPageState extends State<SongDetailsPage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            _song != null ?
                             Text(
-                              "0.75",
+                              _song!.acousticness.toStringAsFixed(3),
                               style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Colors.white)
-                            ),
+                            ) : CircularProgressIndicator(strokeWidth:2.0, color: Colors.white),
                             SizedBox(height: 5,),
                             Text(
                               "Acousticness",
@@ -174,10 +230,11 @@ class _SongDetailsPageState extends State<SongDetailsPage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            _song != null ?
                             Text(
-                              "0.42",
+                              _song!.valence.toStringAsFixed(3),
                               style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Colors.white)
-                            ),
+                            ) : CircularProgressIndicator(strokeWidth:2.0, color: Colors.white),
                             SizedBox(height: 5,),
                             Text(
                               "Valence",

@@ -27,6 +27,7 @@ class Constants {
 
   static const textNavBarHome = "Home";
   static const textNavBarLibrary = "My Library";
+  static const textNavBarCharts = "Top Charts";
   static const textNavBarMap = "Music Map";
 
   static const statusBarColor = SystemUiOverlayStyle(
