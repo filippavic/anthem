@@ -64,10 +64,38 @@ class _SongDetailsPageState extends State<SongDetailsPage> {
 
   void saveRating() async {
     // Save rating for the user
-    FirebaseFirestore.instance.collection('users').doc(user.email).collection('ratedSongs').doc(widget.songID).set({
+    var batch = FirebaseFirestore.instance.batch();
+
+    var newGroup = FirebaseFirestore.instance.collection('users').doc(user.email);
+    batch.update(newGroup, {'noOfRatedSongs': FieldValue.increment(1)});
+
+    if (_songRating! >= 3) {
+      batch.update(newGroup, {'noOfFavoriteSongs': FieldValue.increment(1)});
+
+      var newFavorite = newGroup.collection('favoriteSongs').doc(widget.songID);
+      batch.set(newFavorite, {
+        'name': _song!.name,
+        'album': _song!.album,
+        'artists': _song!.artists,
+        'releaseDate': _song!.releaseDate,
+        'energy': _song!.energy,
+        'acousticness': _song!.acousticness,
+        'valence': _song!.valence,
+        'id': _song!.songID
+      });
+    }
+
+    var newMember = newGroup.collection('ratedSongs').doc(widget.songID);
+    batch.set(newMember, {
       'rating': _songRating!.toInt(),
       'dateRated': DateTime.now()
-    }).then((value) => setState(() { _ratingChange = false;}));
+    });
+
+    batch.commit().then((value) => {
+      setState(() { _ratingChange = false;})
+    }).catchError((err) {
+      print(err);
+    });
 
     // Save rating globally
     DateTime now = DateTime.now();

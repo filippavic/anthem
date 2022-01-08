@@ -1,6 +1,9 @@
+import 'package:anthem/pages/details/song_details_page.dart';
 import 'package:anthem/utils/constants.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FavoriteSongsPage extends StatefulWidget {
   @override
@@ -9,14 +12,8 @@ class FavoriteSongsPage extends StatefulWidget {
 
 class _FavoriteSongsPageState extends State<FavoriteSongsPage> {
 
-  var songs = [
-    ['Justin Bieber', 'Without You', '1uNFoZAHBGtllmzznpCI3s'],
-    ['Katy Perry', 'Hot N Cold', '6jJ0s89eD6GaHleKKya26X'],
-    ['Rihanna', 'Monster', '5pKCCKE2ajJHZ9KAiaK11H'],
-    ['Taylor Swift', 'Blank Space', '06HL4z0CvFAxyc27GXpf02'],
-    ['Taylor Swift', 'Blank Space', '06HL4z0CvFAxyc27GXpf02'],
-  ];
-
+  // User data 
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +39,64 @@ class _FavoriteSongsPageState extends State<FavoriteSongsPage> {
                             "All favourite songs",
                             style: TextStyle(fontSize: 32, fontWeight: FontWeight.w800, color: Colors.white),
                           ),
-                          // List of all favourite songs
                         ],
                       ),
-                    ), 
+                    ),
+                    SizedBox(height: 30,),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: StreamBuilder(
+                        stream: FirebaseFirestore.instance.collection('users').doc(user.email).collection('favoriteSongs').snapshots(),
+                        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasData) {
+                            return ListView(
+                              shrinkWrap: true,
+                              children: snapshot.data!.docs.map((song) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                    child: SizedBox(
+                                    width: double.infinity,
+                                    height: 65,
+                                    child: ElevatedButton(                  
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(song["name"], style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
+                                              Text((song["artists"] as List<dynamic>).join(","), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300))
+                                            ],
+                                          ),
+                                          Icon(Icons.arrow_right_rounded)
+                                        ],),
+                                      style: ElevatedButton.styleFrom(primary: Constants.kSecondaryDarkBackgroundColor, onPrimary: Colors.white,
+                                      shape: new RoundedRectangleBorder(
+                                            borderRadius: new BorderRadius.circular(10),
+                                            
+                                          )),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => SongDetailsPage(song["id"]),
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  )
+                                  );
+                              }).toList()
+                            );
+                          }
+                          else {
+                            return CircularProgressIndicator(color: Colors.white, strokeWidth: 2,);
+                          }
+                        }
+                      ),
+                    )
                   ],
                 ),
               ),

@@ -4,10 +4,12 @@ import 'package:anthem/pages/details/favorite_songs_page.dart';
 import 'package:anthem/pages/details/song_details_page.dart';
 import 'package:anthem/services/weather_api.dart';
 import 'package:anthem/utils/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:anthem/utils/chart_data.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LibraryView extends StatefulWidget {
   @override
@@ -16,19 +18,14 @@ class LibraryView extends StatefulWidget {
 
 class _LibraryViewState extends State<LibraryView> {
 
+  // User data 
+  final user = FirebaseAuth.instance.currentUser!;
+
   var artistsMap = [
     ['Justin Bieber', 'https://i.scdn.co/image/ab676161000051748ae7f2aaa9817a704a87ea36', '1uNFoZAHBGtllmzznpCI3s'],
     ['Katy Perry', 'https://i.scdn.co/image/ab67616100005174dc9dcb7e4a97b4552e1224d6', '6jJ0s89eD6GaHleKKya26X'],
     ['Rihanna', 'https://i.scdn.co/image/ab67616100005174019d6873a01987cbe35888cd', '5pKCCKE2ajJHZ9KAiaK11H'],
     ['Taylor Swift', 'https://i.scdn.co/image/ab676161000051749e3acf1eaf3b8846e836f441', '06HL4z0CvFAxyc27GXpf02'],
-  ];
-
-  var songs = [
-    ['Justin Bieber', 'Without You', '1uNFoZAHBGtllmzznpCI3s'],
-    ['Katy Perry', 'Hot N Cold', '6jJ0s89eD6GaHleKKya26X'],
-    ['Rihanna', 'Monster', '5pKCCKE2ajJHZ9KAiaK11H'],
-    ['Taylor Swift', 'Blank Space', '06HL4z0CvFAxyc27GXpf02'],
-    ['Taylor Swift', 'Blank Space', '06HL4z0CvFAxyc27GXpf02'],
   ];
 
   @override
@@ -89,7 +86,7 @@ class _LibraryViewState extends State<LibraryView> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "Favourite artists",
+                                "Trending artists",
                                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white),
                               ),
                               Text(
@@ -203,145 +200,56 @@ class _LibraryViewState extends State<LibraryView> {
                             ],
                           ), 
                           SizedBox(height: 5),
-                          ListView(
-                            shrinkWrap: true,
-                            children: <Widget>[
-                              SizedBox(
-                                width: double.infinity,
-                                height: 65,
-                                child: ElevatedButton(                  
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Column(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(songs[0][1], style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
-                                          Text(songs[0][0], style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300))
-                                        ],
-                                      ),
-                                      Icon(Icons.arrow_right_rounded)
-                                    ],),
-                                  style: ElevatedButton.styleFrom(primary: Constants.kSecondaryDarkBackgroundColor, onPrimary: Colors.white,
-                                  shape: new RoundedRectangleBorder(
-                                        borderRadius: new BorderRadius.circular(10),
-                                        
-                                      )),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SongDetailsPage("1sFWEpf1aPYN576LS1aa4Y"),
-                                      ),
-                                    );
-                                  },
-                                )
-                              ),
-                              SizedBox(height: 10),
-                              SizedBox(
-                                width: double.infinity,
-                                height: 65,
-                                child: ElevatedButton(                  
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Column(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(songs[1][1], style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
-                                          Text(songs[1][0], style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300))
-                                        ],
-                                      ),
-                                      Icon(Icons.arrow_right_rounded)
-                                    ],),
-                                  style: ElevatedButton.styleFrom(primary: Constants.kSecondaryDarkBackgroundColor, onPrimary: Colors.white,
-                                  shape: new RoundedRectangleBorder(
-                                        borderRadius: new BorderRadius.circular(10),
-                                        
-                                      )),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SongDetailsPage("1sFWEpf1aPYN576LS1aa4Y"),
-                                      ),
-                                    );
-                                  },
-                                )
-                              ),
-                              SizedBox(height: 10),
-                              SizedBox(
-                                width: double.infinity,
-                                height: 65,
-                                child: ElevatedButton(                  
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Column(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(songs[2][1], style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
-                                          Text(songs[2][0], style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300))
-                                        ],
-                                      ),
-                                      Icon(Icons.arrow_right_rounded)
-                                    ],),
-                                  style: ElevatedButton.styleFrom(primary: Constants.kSecondaryDarkBackgroundColor, onPrimary: Colors.white,
-                                  shape: new RoundedRectangleBorder(
-                                        borderRadius: new BorderRadius.circular(10),
-                                        
-                                      )),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SongDetailsPage(songs[2][2]),
-                                      ),
-                                    );
-                                  },
-                                )
-                              ),
-                              SizedBox(height: 10),
-                              SizedBox(
-                                width: double.infinity,
-                                height: 65,
-                                child: ElevatedButton(                  
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Column(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(songs[3][1], style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
-                                          Text(songs[3][0], style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300))
-                                        ],
-                                      ),
-                                      Icon(Icons.arrow_right_rounded)
-                                    ],),
-                                  style: ElevatedButton.styleFrom(primary: Constants.kSecondaryDarkBackgroundColor, onPrimary: Colors.white,
-                                  shape: new RoundedRectangleBorder(
-                                        borderRadius: new BorderRadius.circular(10),
-                                        
-                                      )),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SongDetailsPage("1m81kKiAMphhyNvuazFoui"),
-                                      ),
-                                    );
-                                  },
-                                )
-                              ),
-                            ],
+                          StreamBuilder(
+                            stream: FirebaseFirestore.instance.collection('users').doc(user.email).collection('favoriteSongs').limit(4).snapshots(),
+                            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (snapshot.hasData) {
+                                return ListView(
+                                  shrinkWrap: true,
+                                  children: snapshot.data!.docs.map((song) {
+                                     return Padding(
+                                       padding: EdgeInsets.only(bottom: 10),
+                                       child: SizedBox(
+                                        width: double.infinity,
+                                        height: 65,
+                                        child: ElevatedButton(                  
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Column(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(song["name"], style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
+                                                  Text((song["artists"] as List<dynamic>).join(","), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300))
+                                                ],
+                                              ),
+                                              Icon(Icons.arrow_right_rounded)
+                                            ],),
+                                          style: ElevatedButton.styleFrom(primary: Constants.kSecondaryDarkBackgroundColor, onPrimary: Colors.white,
+                                          shape: new RoundedRectangleBorder(
+                                                borderRadius: new BorderRadius.circular(10),
+                                                
+                                              )),
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => SongDetailsPage(song["id"]),
+                                              ),
+                                            );
+                                          },
+                                        )
+                                      )
+                                     );
+                                  }).toList()
+                                );
+                              }
+                              else {
+                                return CircularProgressIndicator(color: Colors.white, strokeWidth: 2,);
+                              }
+                            }
                           ),
                         ],
                       ),

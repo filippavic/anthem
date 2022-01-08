@@ -35,12 +35,24 @@ class _InitialSongsPageState extends State<InitialSongsPage> {
     for (var song in globals.recommendedSongsInfo.values) {
       print("song: " + song.toString());
       if(_selectedSongs.contains(song["id"])){
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.email)
-            .collection('favoriteSongs')
-            .doc(song["id"])
-            .set(song);
+        var batch = FirebaseFirestore.instance.batch();
+
+        var newGroup = FirebaseFirestore.instance.collection('users').doc(user.email);
+        batch.update(newGroup, {'noOfFavoriteSongs': FieldValue.increment(1)});
+
+        var newMember = newGroup.collection('favoriteSongs').doc(song["id"]);
+        batch.set(newMember, song);
+
+        batch.commit().catchError((err) {
+          print(err);
+        });
+
+        // FirebaseFirestore.instance
+        //     .collection('users')
+        //     .doc(user.email)
+        //     .collection('favoriteSongs')
+        //     .doc(song["id"])
+        //     .set(song);
       }
       FirebaseFirestore.instance
           .collection('songs')

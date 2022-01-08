@@ -1,14 +1,6 @@
-import 'dart:async';
-import 'package:anthem/animation/fade_animation.dart';
 import 'package:anthem/components/chart_list.dart';
-import 'package:anthem/pages/details/favorite_songs_page.dart';
-import 'package:anthem/pages/details/song_details_page.dart';
-import 'package:anthem/services/weather_api.dart';
 import 'package:anthem/utils/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:anthem/utils/chart_data.dart';
 
 class ChartsView extends StatefulWidget {
   @override
@@ -20,32 +12,17 @@ class _ChartsViewState extends State<ChartsView> {
   // Time period for charts
   int _index = 0;
 
-  var artistsMap = [
-    ['Justin Bieber', 'https://i.scdn.co/image/ab676161000051748ae7f2aaa9817a704a87ea36', '1uNFoZAHBGtllmzznpCI3s'],
-    ['Katy Perry', 'https://i.scdn.co/image/ab67616100005174dc9dcb7e4a97b4552e1224d6', '6jJ0s89eD6GaHleKKya26X'],
-    ['Rihanna', 'https://i.scdn.co/image/ab67616100005174019d6873a01987cbe35888cd', '5pKCCKE2ajJHZ9KAiaK11H'],
-    ['Taylor Swift', 'https://i.scdn.co/image/ab676161000051749e3acf1eaf3b8846e836f441', '06HL4z0CvFAxyc27GXpf02'],
-  ];
-
-  var songs = [
-    ['Justin Bieber', 'Without You', '1uNFoZAHBGtllmzznpCI3s'],
-    ['Katy Perry', 'Hot N Cold', '6jJ0s89eD6GaHleKKya26X'],
-    ['Rihanna', 'Monster', '5pKCCKE2ajJHZ9KAiaK11H'],
-    ['Taylor Swift', 'Blank Space', '06HL4z0CvFAxyc27GXpf02'],
-    ['Taylor Swift', 'Blank Space', '06HL4z0CvFAxyc27GXpf02'],
-  ];
-
-  // Widget buildCharts() {
-  //   switch(_index) {
-  //     case 1:
-  //       return ChartList(ChartDuration.month);
-  //     case 2:
-  //       return ChartList(ChartDuration.year);
-  //     case 0:
-  //     default:
-  //       return ChartList(ChartDuration.week);
-  //   }
-  // }
+  Widget buildCharts() {
+    switch(_index) {
+      case 1:
+        return ChartList(key: Key("month"), duration: ChartDuration.month);
+      case 2:
+        return ChartList(key: Key("year"), duration: ChartDuration.year);
+      case 0:
+      default:
+        return ChartList(key: Key("week"), duration: ChartDuration.week);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -163,9 +140,7 @@ class _ChartsViewState extends State<ChartsView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          if (_index == 0) ChartList(key: Key("week"), duration: ChartDuration.week)
-                          else if (_index == 1) ChartList(key: Key("month"), duration: ChartDuration.month)
-                          else ChartList(key: Key("year"), duration: ChartDuration.year)
+                          buildCharts()
                         ],
                       ),
                     ),
