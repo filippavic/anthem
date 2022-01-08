@@ -9,6 +9,8 @@ import 'package:fl_chart/fl_chart.dart';
 import "package:flutter_feather_icons/flutter_feather_icons.dart";
 import 'package:anthem/utils/chart_data.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -17,6 +19,10 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
 
+  // User data 
+  final user = FirebaseAuth.instance.currentUser!;
+
+  // Time and weather
   late String _timeString;
   String _currentWeather = "";
 
@@ -53,6 +59,11 @@ class _HomeViewState extends State<HomeView> {
     }).onError((error, stackTrace) => {});
 
     if (currentPosition != null) {
+      // Save last known location to database
+      FirebaseFirestore.instance.collection('users').doc(user.email).update({
+        'lastLocation': GeoPoint(currentPosition!.latitude, currentPosition!.longitude)
+      });
+
       final response = await WeatherApi().fetchWeatherByCoordinates(currentPosition!.latitude.toString(), currentPosition!.longitude.toString());
 
       if (this.mounted) {
