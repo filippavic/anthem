@@ -25,6 +25,8 @@ class _HomeViewState extends State<HomeView> {
   // Time and weather
   late String _timeString;
   String _currentWeather = "";
+  int? _noOfRatedSongs;
+  int? _noOfFavoriteSongs;
 
   @override
   void initState() {
@@ -33,6 +35,9 @@ class _HomeViewState extends State<HomeView> {
 
     _getCurrentWeather();
     Timer.periodic(Duration(seconds: 300), (Timer t) => _getCurrentWeather());
+
+    _getMusicStats();
+
     super.initState();
   }
 
@@ -72,6 +77,16 @@ class _HomeViewState extends State<HomeView> {
         });
       }
     }
+  }
+
+  _getMusicStats() async {
+    var document = FirebaseFirestore.instance.collection('users').doc(user.email).get();
+
+    document.then((data) => {
+      setState(() { _noOfFavoriteSongs = (data['noOfFavoriteSongs'] as int).toInt(); _noOfRatedSongs = (data['noOfRatedSongs'] as int).toInt();})
+    }).catchError((error) {
+      // error
+    });
   }
 
   @override
@@ -213,7 +228,7 @@ class _HomeViewState extends State<HomeView> {
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
-                            "Your stats for the week",
+                            "Your stats",
                             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white),
                           ),
                         ),
@@ -241,12 +256,14 @@ class _HomeViewState extends State<HomeView> {
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              _noOfFavoriteSongs != null ?
                               Text(
-                              "15",
+                              _noOfFavoriteSongs.toString(),
                               style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800, color: Colors.white),
-                              ),
+                              ) : CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                              SizedBox(height: 8),
                               Text(
-                                "newly discovered artists",
+                                "favorite songs",
                                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
                               )
                             ],
@@ -254,45 +271,47 @@ class _HomeViewState extends State<HomeView> {
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              _noOfRatedSongs != null ?
                               Text(
-                              "47",
+                              _noOfRatedSongs.toString(),
                               style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800, color: Colors.white),
-                              ),
+                              ) : CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                              SizedBox(height: 8),
                               Text(
-                                "newly discovered songs",
+                                "rated songs",
                                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
                               )
                             ],
-                          )                        
+                          ),                       
                         ],
                       )
                       )
                     ),
-                    SizedBox(height: 16),
-                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Container(
-                      width: double.infinity,
-                      height: 160,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Colors.grey.shade900
-                      ),
-                      child: Stack(
-                        alignment: AlignmentDirectional.center,
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
-                            child: LineChart(
-                              getChartData()
-                            ),
-                          )                     
-                        ],
-                      )
-                      )
-                    ),
-                    SizedBox(height: 16),
+                    // SizedBox(height: 16),
+                    //  Padding(
+                    //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                    //   child: Container(
+                    //   width: double.infinity,
+                    //   height: 160,
+                    //   decoration: BoxDecoration(
+                    //     borderRadius: BorderRadius.circular(15),
+                    //     color: Colors.grey.shade900
+                    //   ),
+                    //   child: Stack(
+                    //     alignment: AlignmentDirectional.center,
+                    //     children: [
+                    //       Container(
+                    //         width: double.infinity,
+                    //         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+                    //         child: LineChart(
+                    //           getChartData()
+                    //         ),
+                    //       )                     
+                    //     ],
+                    //   )
+                    //   )
+                    // ),
+                    // SizedBox(height: 16),
                   ],
                 ),
               ),

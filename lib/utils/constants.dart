@@ -27,7 +27,7 @@ class Constants {
 
   static const textNavBarHome = "Home";
   static const textNavBarLibrary = "My Library";
-  static const textNavBarCharts = "Top Charts";
+  static const textNavBarCharts = "Top Rated";
   static const textNavBarMap = "Music Map";
 
   static const statusBarColor = SystemUiOverlayStyle(
@@ -36,3 +36,9 @@ class Constants {
 
   static const kAnimationDuration = Duration(milliseconds: 200);
 }
+
+enum ChartDuration { 
+   week, 
+   month, 
+   year 
+} 

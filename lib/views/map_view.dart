@@ -1,4 +1,5 @@
 import 'package:anthem/services/geolocation.dart';
+import 'package:anthem/utils/classes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:anthem/components/music_bottom_sheet.dart';
@@ -26,6 +27,7 @@ class _MapViewState extends State<MapView> {
 
   List<Marker> _markers = [];
 
+  List<MapItem> _mapItems = [];
 
   @override
   void initState() {
@@ -43,35 +45,32 @@ class _MapViewState extends State<MapView> {
   }
 
 
-  Future<List<GeoPoint>> _getOtherUsers() async {
+  Future<List<MapItem>> _getOtherUsers() async {
     List<DocumentSnapshot> templist;
-    List<Map<dynamic, dynamic>> list = [];
+    List<MapItem> list = [];
 
-    Query query = FirebaseFirestore.instance.collection('users').where('mail', isNotEqualTo: user.email).limit(10);
+    List<MapItem> mapItems = [];
+
+    Query query = FirebaseFirestore.instance.collection('users').where(FieldPath.documentId, isNotEqualTo: user.email).limit(10);
     QuerySnapshot collectionSnapshot = await query.get();
 
     templist = collectionSnapshot.docs;
 
-    list = templist.map((DocumentSnapshot docSnapshot){
-      return docSnapshot.data() as Map<dynamic,dynamic>;
+    list = templist.map((DocumentSnapshot docSnapshot) {
+      var data = docSnapshot.data() as Map<dynamic,dynamic>;
+      return MapItem(userID: docSnapshot.id, positionData: data['lastLocation']);
     }).toList();
 
-    List<GeoPoint> locationList = [];
-
-    list.map((item) => {
-      locationList.add(item['lastLocation'])
-    }).toList();
-
-    return locationList;
+    return list;
   }
 
-  List<Marker> _buildMarkers(List<GeoPoint> locationList) {
+  List<Marker> _buildMarkers(List<MapItem> locationList) {
     final _markerList = <Marker>[];
 
     locationList.forEach((element) {
       _markerList.add(
         Marker(
-          point: LatLng(element.latitude, element.longitude),
+          point: LatLng(element.positionData.latitude, element.positionData.longitude),
           builder: (_) {
             return GestureDetector(
               child: Center(
@@ -99,7 +98,7 @@ class _MapViewState extends State<MapView> {
                   ),
                   backgroundColor: Colors.black,
                   context: context,
-                  builder: (context) => MusicBottomSheet(context: context, userID: "123"));
+                  builder: (context) => MusicBottomSheet(context: context, userID: element.userID));
               },
               );
           }

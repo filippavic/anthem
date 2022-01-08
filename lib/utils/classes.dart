@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class PositionData {
   const PositionData({
     required this.lat,
@@ -29,4 +31,44 @@ class Song {
   final double energy;
   final double acousticness;
   final double valence;
+}
+
+
+class SongRating {
+  const SongRating({
+    required this.songID,
+    required this.name,
+    required this.artists,
+    required this.ratings,
+    this.avgRating
+  });
+
+  final String songID;
+  final String name;
+  final List<dynamic> artists;
+  final List<dynamic> ratings;
+  final double? avgRating;
+}
+
+
+class MapSong {
+  const MapSong({
+    required this.songID,
+    required this.name,
+    required this.artists,
+  });
+
+  final String songID;
+  final String name;
+  final List<dynamic> artists;
+}
+
+class MapItem {
+  const MapItem({
+    required this.userID,
+    required this.positionData,
+  });
+
+  final String userID;
+  final GeoPoint positionData;
 }
