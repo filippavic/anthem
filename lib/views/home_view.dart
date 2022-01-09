@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:anthem/animation/fade_animation.dart';
+import 'package:anthem/pages/details/recommended_song_page.dart';
 import 'package:anthem/services/geolocation.dart';
+import 'package:anthem/services/recommender_service.dart';
 import 'package:anthem/services/weather_api.dart';
 import 'package:anthem/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +30,11 @@ class _HomeViewState extends State<HomeView> {
   int? _noOfRatedSongs;
   int? _noOfFavoriteSongs;
 
+  // Songs
+  List<dynamic> _recommendedSongs = [];
+  List<dynamic> _distinctArtists = [];
+  bool _isLoading = true;
+
   @override
   void initState() {
     _timeString = _formatDateTime(DateTime.now());
@@ -37,6 +44,8 @@ class _HomeViewState extends State<HomeView> {
     Timer.periodic(Duration(seconds: 300), (Timer t) => _getCurrentWeather());
 
     _getMusicStats();
+
+    _getRecommendedSongs();
 
     super.initState();
   }
@@ -87,6 +96,46 @@ class _HomeViewState extends State<HomeView> {
     }).catchError((error) {
       // error
     });
+  }
+
+  _getRecommendedSongs() {
+    setState(() {
+      _isLoading = true;
+    });
+
+    getRecommendations(user.email!).then((value) {
+      List<DocumentSnapshot> templist;
+      List<dynamic> list = [];
+      List<String> artists = [];
+      Set<dynamic> artistsSet = Set();
+
+      templist = value.docs;
+
+      list = templist.map((DocumentSnapshot docSnapshot) {
+        return docSnapshot.data() as Map<dynamic,dynamic>;
+      }).toList();
+
+      list.shuffle();
+
+      list.forEach((element) {
+        artistsSet.addAll(element["artists"] as List<dynamic>);
+      });
+
+      setState(() {
+        _distinctArtists = artistsSet.take(3).toList();
+        _recommendedSongs = list;
+        _isLoading = false;
+      });
+    });
+  }
+
+  void _openRecommendations() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RecommendedSongsPage(recommendedSongs: _recommendedSongs),
+      ),
+    );
   }
 
   @override
@@ -184,23 +233,24 @@ class _HomeViewState extends State<HomeView> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
+                                  _isLoading ? CircularProgressIndicator(color: Colors.white, strokeWidth: 2,) :
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text('Artist #1, Artist #2, Artist #3'),
+                                      Text(_distinctArtists.join(", ")),
                                       Text('... and more!')
                                     ],
                                   ),
                                   Icon(Icons.arrow_right_rounded)
                                 ],),
-                              style: ElevatedButton.styleFrom(primary: Constants.kQuartaryColor, onPrimary: Colors.white,
+                              style: ElevatedButton.styleFrom(primary: _isLoading? Constants.kSecondaryDarkBackgroundColor : Constants.kQuartaryColor, onPrimary: Colors.white,
+                                                              onSurface: Colors.white24,
                               shape: new RoundedRectangleBorder(
                                     borderRadius: new BorderRadius.circular(10),
                                     
                                   )),
-                              onPressed: () {
-                              },
+                              onPressed: _isLoading ? null : _openRecommendations,
                             )
                           ),
                           SizedBox(height: 10),
@@ -215,6 +265,7 @@ class _HomeViewState extends State<HomeView> {
                                     side: BorderSide(color: Constants.kPrimaryColor, width: 2)
                                   )),
                               onPressed: () {
+                                _getRecommendedSongs();
                               },
                             )
                           )

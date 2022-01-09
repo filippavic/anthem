@@ -1,16 +1,28 @@
 import 'package:anthem/components/sign_in_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:anthem/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:anthem/utils/resource.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WelcomePage extends StatelessWidget {
+
+  User? result = FirebaseAuth.instance.currentUser;
+
+  Future<bool> _checkIfFinishedSetup() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    return prefs.getBool('finishedSetup') ?? false;
+  }
+
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    User? result = FirebaseAuth.instance.currentUser;
+    // User? result = FirebaseAuth.instance.currentUser;
 
     return SafeArea(
       child: SizedBox(
@@ -63,11 +75,14 @@ class WelcomePage extends StatelessWidget {
                           borderRadius: new BorderRadius.circular(10),
                         )),
                         onPressed: () {
-                          // Navigator.pushReplacementNamed(context, "/home");
-
-                          // ====================================================
-                          // Always navigate to initial pages - for testing only!
-                          Navigator.pushReplacementNamed(context, "/initial-page");
+                          _checkIfFinishedSetup().then((value) {
+                            if (value == true) {
+                              Navigator.pushReplacementNamed(context, "/home");
+                            }
+                            else {
+                              Navigator.pushReplacementNamed(context, "/initial-page");
+                            }
+                          });
                         },
                       )
                     )

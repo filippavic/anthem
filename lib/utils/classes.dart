@@ -40,14 +40,22 @@ class SongRating {
     required this.name,
     required this.artists,
     required this.ratings,
-    this.avgRating
   });
 
   final String songID;
   final String name;
   final List<dynamic> artists;
   final List<dynamic> ratings;
-  final double? avgRating;
+}
+
+class SongAverage {
+  const SongAverage({
+    required this.song,
+    required this.avgRating,
+  });
+
+  final SongRating song;
+  final double avgRating;
 }
 
 
