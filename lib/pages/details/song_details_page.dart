@@ -116,7 +116,7 @@ class _SongDetailsPageState extends State<SongDetailsPage> {
         batch.set(newMember, {
           'name': _song!.name,
           'artists': _song!.artists,
-          'ratings': _songRating!.toInt()
+          'ratings': [_songRating!.toInt()]
         });
 
         batch.commit().catchError((err) {
@@ -234,11 +234,12 @@ class _SongDetailsPageState extends State<SongDetailsPage> {
                             _song != null ?
                             Text(
                               _song!.album,
+                              textAlign: TextAlign.center,  
                               style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Colors.white)
                             ) : CircularProgressIndicator(strokeWidth:2.0, color: Colors.white),
                             SizedBox(height: 5,),
                             Text(
-                              "Album Name",
+                              "Album Name",                     
                               style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white)
                             ),
                           ],

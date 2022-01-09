@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:anthem/pages/initial/initial_artists_page.dart';
 import 'package:anthem/utils/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:anthem/animation/fade_animation.dart';
@@ -15,9 +16,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class InitialPage extends StatelessWidget {
 
+  final user = FirebaseAuth.instance.currentUser!;
+
   //Twitter API call
-  Future<void> getFriends() async {
-    final user = FirebaseAuth.instance.currentUser!;
+  Future<void> getFriends() async {  
     final profile = user.providerData;
     final uid = profile.last.uid;
     final response = await http.get(
@@ -43,6 +45,14 @@ class InitialPage extends StatelessWidget {
         globals.artists.add(globals.artistsMap[int.parse(id)]);
       }
     }
+  }
+
+  Future<void> createUserDoc() async {
+    await FirebaseFirestore.instance.collection('users').doc(user.email!).set({
+      'noOfRatedSongs': 0.toInt(),
+      'noOfFavoriteSongs': 0.toInt(),
+      'lastLocation': null
+    });
   }
 
   @override
@@ -86,6 +96,7 @@ class InitialPage extends StatelessWidget {
                         )),
                         onPressed: () async {
                           await getFriends();
+                          await createUserDoc();
                           debugPrint(globals.artists.toString());
                           Navigator.push(
                             context,

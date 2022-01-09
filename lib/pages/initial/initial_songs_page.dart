@@ -14,6 +14,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:anthem/api/spotify_api.dart';
 import 'package:anthem/globals/globals.dart' as globals;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InitialSongsPage extends StatefulWidget {
   const InitialSongsPage({ Key? key }) : super(key: key);
@@ -60,6 +61,12 @@ class _InitialSongsPageState extends State<InitialSongsPage> {
           .set(song);
     }
     // ---- Writing songs to Firestore END ----
+  }
+
+  Future<void> _setFinishedSetup() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    prefs.setBool('finishedSetup', true);
   }
 
   @override

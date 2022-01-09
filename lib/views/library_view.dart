@@ -221,7 +221,13 @@ class _LibraryViewState extends State<LibraryView> {
                                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  Text(song["name"], style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
+                                                  Container(
+                                                    width: MediaQuery.of(context).size.width * 0.7,
+                                                    child: Text(song["name"].toString(), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white),
+                                                      softWrap: false,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      ),
+                                                  ),
                                                   Text((song["artists"] as List<dynamic>).join(","), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300))
                                                 ],
                                               ),

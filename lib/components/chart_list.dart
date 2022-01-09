@@ -1,17 +1,10 @@
 import 'dart:async';
-import 'package:anthem/animation/fade_animation.dart';
-import 'package:anthem/pages/details/favorite_songs_page.dart';
 import 'package:anthem/pages/details/song_details_page.dart';
-import 'package:anthem/services/weather_api.dart';
 import 'package:anthem/utils/classes.dart';
 import 'package:anthem/utils/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:anthem/utils/chart_data.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:collection/collection.dart';
+
 
 class ChartList extends StatefulWidget {
 
@@ -26,14 +19,14 @@ class ChartList extends StatefulWidget {
 class _ChartListState extends State<ChartList> {
 
   Map<String, SongRating> _songMap = {};
-  List<SongRating> _songRatings = [];
-  List<double> _songAvg = [];
   bool isLoading = true;
+  List<SongAverage> _topChartList = [];
 
   @override
   void initState() {
     _getRatingsForDuration();
 
+    // Wait for the calculation to finish
     Future.delayed(const Duration(milliseconds: 2000), () {
       _calculateTopChart(_songMap);
       setState(() {
@@ -43,6 +36,7 @@ class _ChartListState extends State<ChartList> {
     super.initState();
   }
 
+  // Get the earliest date to include
   DateTime _getDateLimit() {
     var now = DateTime.now();
 
@@ -57,14 +51,12 @@ class _ChartListState extends State<ChartList> {
     }
   }
 
+  // Get the ratings for the desired time frame
   void _getRatingsForDuration() async {
     List<DocumentSnapshot> templist;
     List<String> listDayIDs = [];
-    Map<String, SongRating> songMap = {};
 
     var dateLimit = _getDateLimit();
-
-    print(dateLimit);
 
     Query query = FirebaseFirestore.instance.collection('ratings').where('date', isGreaterThanOrEqualTo: dateLimit);
     QuerySnapshot collectionSnapshot = await query.get();
@@ -91,6 +83,7 @@ class _ChartListState extends State<ChartList> {
     });
   }
 
+  // Get the song ratings for a single day
   Future<Map<String, SongRating>> _getRatingsForDay(String dayID) async {
     List<DocumentSnapshot> templist;
     List<Map<String, dynamic>> listSongs = [];
@@ -115,19 +108,17 @@ class _ChartListState extends State<ChartList> {
   }
 
 
+  // Calculate the average song ratings and sort them
   void _calculateTopChart(Map<String, SongRating> songMap) {
-    List<SongRating> songRatings = [];
+    List<SongAverage> songAverageRatigns = [];
 
-    var sortMapByValue = Map.fromEntries(
-    songMap.entries.toList()
-    ..sort((e1, e2) => (e1.value.ratings.map((rating) => rating).reduce((a,b) => a+b) / e1.value.ratings.length)
-    .compareTo(e2.value.ratings.map((rating) => rating).reduce((a,b) => a*b) / e2.value.ratings.length)));
-
-    _songRatings = songMap.entries.map((entry) => entry.value).toList();
-
-    for (SongRating sr in _songRatings) {
-      _songAvg.add(sr.ratings.map((rating) => rating).reduce((a,b) => a+b)/sr.ratings.length);
+    for (String songID in songMap.keys) {
+      songAverageRatigns.add(SongAverage(song: songMap[songID]!, avgRating: songMap[songID]!.ratings.reduce((a,b) => a+b) / songMap[songID]!.ratings.length));
     }
+
+    songAverageRatigns.sort((e1, e2) => e2.avgRating.compareTo(e1.avgRating));
+
+    _topChartList = songAverageRatigns;
   }
 
 
@@ -141,9 +132,9 @@ class _ChartListState extends State<ChartList> {
     ListView.separated(
       separatorBuilder: (BuildContext context, int index) => Divider(),
       shrinkWrap: true,
-      itemCount: _songRatings.length,
+      itemCount: _topChartList.length,
       itemBuilder: (context, index) {
-        final item = _songRatings[index];
+        final item = _topChartList[index];
         return SizedBox(
           width: double.infinity,
           height: 65,
@@ -154,14 +145,20 @@ class _ChartListState extends State<ChartList> {
               children: [
                 Row (
                   children: [
-                    Text(_songAvg[index].toStringAsFixed(1), style:TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+                    Text(item.avgRating.toStringAsFixed(1), style:TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
                     SizedBox(width: 15,),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(item.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
-                        Text(item.artists.join(","), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300))
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          child: Text(item.song.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white),
+                            softWrap: false,
+                            overflow: TextOverflow.ellipsis,
+                            ),
+                        ),
+                        Text(item.song.artists.join(","), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300))
                       ],
                     ),
                   ],
@@ -177,7 +174,7 @@ class _ChartListState extends State<ChartList> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SongDetailsPage(item.songID),
+                  builder: (context) => SongDetailsPage(item.song.songID),
                 ),
               );
             },
