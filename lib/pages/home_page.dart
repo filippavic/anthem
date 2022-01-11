@@ -21,11 +21,16 @@ class _HomePageState extends State<HomePage> {
   int _index = 0;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) => 
+  WillPopScope(
+    onWillPop: () async => false,
+    child: Scaffold(
       extendBody: true,
       body: buildPages(),
       bottomNavigationBar: buildBottomNavigation(),
+    )
   );
+  
 
 
   Widget buildPages() {

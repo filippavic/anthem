@@ -29,6 +29,9 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
 
   List<String> _selectedArtists = [];
 
+  bool _isLoading = false;
+  bool _isLoadingAnimation = false;
+
   Future<void> setFavoriteArtists() async {
     // var genreCollection = FirebaseFirestore.instance.collection('users').doc(user.email).collection('favoriteArtists');
 
@@ -138,58 +141,91 @@ class _InitialArtistsPageState extends State<InitialArtistsPage> {
       statusBarIconBrightness: Brightness.light
     ));
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      floatingActionButton: _selectedArtists.isNotEmpty ? FloatingActionButton(
-        onPressed: () async {
-          await setFavoriteArtists();
-          await getSongs();
-          await getSongsInfo();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => InitialSongsPage(),
-            ),
-          );
-        },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('${_selectedArtists.length}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
-            SizedBox(width: 2),
-            Icon(Icons.arrow_forward_ios, size: 18, color: Colors.white),
-          ],
-        ),
-        backgroundColor: Constants.kPrimaryColor,
-      ) : null,
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverToBoxAdapter(
-              child: FadeAnimation(1, Padding(
-                padding: EdgeInsets.only(top: 120.0, right: 20.0, left: 20.0),
-                child: Text(
-                  'We looked at your Twitter and found these artists. Which of them do you like?',
-                  style: TextStyle(
-                    fontSize: 35,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        floatingActionButton: _selectedArtists.isNotEmpty && !_isLoading ? FloatingActionButton(
+          onPressed: () async {
+            setState(() {
+              _isLoadingAnimation = true;
+            });
+            Future.delayed(const Duration(milliseconds: 400), () {
+              setState(() {
+                _isLoading = true;
+              });
+            });
+            await setFavoriteArtists();
+            await getSongs();
+            await getSongsInfo();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => InitialSongsPage(),
               ),
-            ))
-          ];
-        },
-        body: Padding(
-          padding: EdgeInsets.all(20.0),
-          child: ListView.builder(
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: globals.artists.length,
-            itemBuilder: (BuildContext context, int index) {
-              return FadeAnimation((1.2 + index) / 4, artist(globals.artists[index], index));
-            }
+            );
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('${_selectedArtists.length}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+              SizedBox(width: 2),
+              Icon(Icons.arrow_forward_ios, size: 18, color: Colors.white),
+            ],
           ),
-        ),
+          backgroundColor: Constants.kPrimaryColor,
+        ) : null,
+        body: _isLoading ? 
+        FadeAnimation(1, Container(
+          width: double.infinity,
+          height: double.infinity,
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Just a second,\nwe're doing some\n✨ magic ✨",
+                style: TextStyle(fontSize: 35, fontWeight: FontWeight.w800, color: Colors.white,), textAlign: TextAlign.center
+              ),
+              SizedBox(height: 50),
+              CircularProgressIndicator(color: Colors.white, strokeWidth: 2,)
+              ],
+            )
+          )
+        ) 
+        :
+        AnimatedOpacity(
+          opacity: _isLoadingAnimation ? 0 : 1,
+          duration: const Duration(milliseconds: 300),
+          child:  NestedScrollView(
+            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+              return <Widget>[
+                SliverToBoxAdapter(
+                  child: FadeAnimation(1, Padding(
+                    padding: EdgeInsets.only(top: 120.0, right: 20.0, left: 20.0),
+                    child: Text(
+                      'We looked at your Twitter and found these artists. Which of them do you like?',
+                      style: TextStyle(
+                        fontSize: 35,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ))
+              ];
+            },
+            body: Padding(
+              padding: EdgeInsets.all(20.0),
+              child: ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: globals.artists.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return FadeAnimation((1.2 + index) / 4, artist(globals.artists[index], index));
+                }
+              ),
+            ),
+          )
+        )
       )
     );
   }
