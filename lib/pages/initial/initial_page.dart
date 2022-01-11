@@ -58,64 +58,66 @@ class InitialPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      body: 
-    SafeArea(
-      child: SizedBox(
-        width: double.infinity,
-        child: Column(
-          children: <Widget>[
-            Expanded(  
-              flex: 5,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 100),
-                child: FadeAnimation(0.5, Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Text("First, we need to get to know you.", style: TextStyle(fontSize: 45, fontWeight: FontWeight.w800, color: Colors.white)),
-                  ]
-                ))
-              )
-            ),
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: FadeAnimation(0.9, ElevatedButton(
-                        child: Text('Continue'),
-                        style: ElevatedButton.styleFrom(primary: Constants.kPrimaryColor, onPrimary: Colors.white,
-                        shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(10),
-                        )),
-                        onPressed: () async {
-                          await getFriends();
-                          await createUserDoc();
-                          debugPrint(globals.artists.toString());
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => InitialArtistsPage(),
-                            ),
-                          );
-                        },
-                      ))
-                    )
-                  ]
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: SafeArea(
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            children: <Widget>[
+              Expanded(  
+                flex: 5,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 100),
+                  child: FadeAnimation(0.5, Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Text("First, we need to get to know you.", style: TextStyle(fontSize: 45, fontWeight: FontWeight.w800, color: Colors.white)),
+                    ]
+                  ))
                 )
+              ),
+              Expanded(
+                flex: 1,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: FadeAnimation(0.9, ElevatedButton(
+                          child: Text('Continue'),
+                          style: ElevatedButton.styleFrom(primary: Constants.kPrimaryColor, onPrimary: Colors.white,
+                          shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(10),
+                          )),
+                          onPressed: () async {
+                            await getFriends();
+                            await createUserDoc();
+                            debugPrint(globals.artists.toString());
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => InitialArtistsPage(),
+                              ),
+                            );
+                          },
+                        ))
+                      )
+                    ]
+                  )
+                )
+    
               )
-  
-            )
-          ],
+            ],
+          )
         )
       )
-    )
+      )
     );
   }
 

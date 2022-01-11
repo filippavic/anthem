@@ -76,59 +76,63 @@ class _InitialSongsPageState extends State<InitialSongsPage> {
       statusBarIconBrightness: Brightness.light
     ));
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      floatingActionButton: _selectedSongs.isNotEmpty ? FloatingActionButton(
-        onPressed: () async {
-          // await setFavoriteArtists();
-          await saveSongs();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomePage(),
-            ),
-          );
-        },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('${_selectedSongs.length}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
-            SizedBox(width: 2),
-            Icon(Icons.arrow_forward_ios, size: 18, color: Colors.white),
-          ],
-        ),
-        backgroundColor: Constants.kPrimaryColor,
-      ) : null,
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverToBoxAdapter(
-              child: FadeAnimation(1, Padding(
-                padding: EdgeInsets.only(top: 120.0, right: 20.0, left: 20.0),
-                child: Text(
-                  'Take a look at some songs. Select the ones you find interesting.',
-                  style: TextStyle(
-                    fontSize: 35,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        floatingActionButton: _selectedSongs.isNotEmpty ? FloatingActionButton(
+          onPressed: () async {
+            // await setFavoriteArtists();
+            await saveSongs();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(),
+              ),
+            );
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('${_selectedSongs.length}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+              SizedBox(width: 2),
+              Icon(Icons.arrow_forward_ios, size: 18, color: Colors.white),
+            ],
+          ),
+          backgroundColor: Constants.kPrimaryColor,
+        ) : null,
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              SliverToBoxAdapter(
+                child: FadeAnimation(1, Padding(
+                  padding: EdgeInsets.only(top: 120.0, right: 20.0, left: 20.0),
+                  child: Text(
+                    'Take a look at some songs. Select the ones you find interesting.',
+                    style: TextStyle(
+                      fontSize: 35,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-            ))
-          ];
-        },
-        body: Padding(
-          padding: EdgeInsets.all(20.0),
-          child: ListView.builder(
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: globals.recommendedSongs.length,
-            itemBuilder: (BuildContext context, int index) {
-              return FadeAnimation((1.2 + index) / 4, song(globals.recommendedSongs[index], index));
-            }
+              ))
+            ];
+          },
+          body: Padding(
+            padding: EdgeInsets.all(20.0),
+            child: ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: globals.recommendedSongs.length,
+              itemBuilder: (BuildContext context, int index) {
+                return FadeAnimation((1.2 + index) / 4, song(globals.recommendedSongs[index], index));
+              }
+            ),
           ),
-        ),
+        )
       )
     );
+
   }
 
   // Promijeniti ovisno o strukturi

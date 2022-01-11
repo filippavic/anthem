@@ -26,7 +26,7 @@ class _MusicBottomSheetState extends State<MusicBottomSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text("✨ Mystery User ✨", style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800, color: Colors.white),),
+          Text("Mystery User", style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800, color: Colors.white),),
           SizedBox(height: 30),
           StreamBuilder(
             stream: FirebaseFirestore.instance.collection('users').doc(widget.userID).collection('favoriteSongs').limit(3).snapshots(),
