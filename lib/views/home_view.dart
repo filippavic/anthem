@@ -27,13 +27,18 @@ class _HomeViewState extends State<HomeView> {
   // Time and weather
   late String _timeString;
   String _currentWeather = "";
-  int? _noOfRatedSongs;
-  int? _noOfFavoriteSongs;
 
   // Songs
   List<dynamic> _recommendedSongs = [];
   List<dynamic> _distinctArtists = [];
   bool _isLoading = true;
+
+  // Statistics
+  int? _noOfRatedSongs;
+  int? _noOfFavoriteSongs;
+  double? _avgEnergy;
+  double? _avgValence;
+  double? _avgAcousticness;
 
   @override
   void initState() {
@@ -91,8 +96,26 @@ class _HomeViewState extends State<HomeView> {
   _getMusicStats() async {
     var document = FirebaseFirestore.instance.collection('users').doc(user.email).get();
 
-    document.then((data) => {
-      setState(() { _noOfFavoriteSongs = (data['noOfFavoriteSongs'] as int).toInt(); _noOfRatedSongs = (data['noOfRatedSongs'] as int).toInt();})
+    document.then((data) {
+      double avgEnergy = 0.0;
+      double avgValence = 0.0;
+      double avgAcousticness = 0.0;
+
+      int noOfFavoriteSongs = (data['noOfFavoriteSongs'] as int).toInt();
+
+      if (noOfFavoriteSongs > 0) {
+        avgEnergy = (data['sumEnergy'] as num).toDouble() / noOfFavoriteSongs;
+        avgValence = (data['sumValence'] as num).toDouble() / noOfFavoriteSongs;
+        avgAcousticness = (data['sumAcousticness'] as num).toDouble() / noOfFavoriteSongs;
+      }
+
+      setState(() {
+        _noOfFavoriteSongs = (data['noOfFavoriteSongs'] as int).toInt();
+        _noOfRatedSongs = (data['noOfRatedSongs'] as int).toInt();
+        _avgEnergy = avgEnergy;
+        _avgValence = avgValence;
+        _avgAcousticness = avgAcousticness;
+      });
     }).catchError((error) {
       // error
     });
@@ -334,6 +357,68 @@ class _HomeViewState extends State<HomeView> {
                               )
                             ],
                           ),                       
+                        ],
+                      )
+                      )
+                    ),
+                    SizedBox(height: 10,),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Container(
+                      width: double.infinity,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Constants.kSecondaryDarkBackgroundColor
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _avgEnergy != null ?
+                              Text(
+                              _avgEnergy!.toStringAsFixed(3),
+                              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800, color: Colors.white),
+                              ) : CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                              SizedBox(height: 8),
+                              Text(
+                                "energy",
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
+                              )
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _avgValence != null ?
+                              Text(
+                              _avgValence!.toStringAsFixed(3),
+                              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800, color: Colors.white),
+                              ) : CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                              SizedBox(height: 8),
+                              Text(
+                                "valence",
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
+                              )
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _avgAcousticness != null ?
+                              Text(
+                              _avgAcousticness!.toStringAsFixed(3),
+                              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800, color: Colors.white),
+                              ) : CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                              SizedBox(height: 8),
+                              Text(
+                                "acousticness",
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
+                              )
+                            ],
+                          ),                        
                         ],
                       )
                       )

@@ -71,6 +71,9 @@ class _SongDetailsPageState extends State<SongDetailsPage> {
 
     if (_songRating! >= 3) {
       batch.update(newGroup, {'noOfFavoriteSongs': FieldValue.increment(1)});
+      batch.update(newGroup, {'sumEnergy': FieldValue.increment(_song!.energy)});
+      batch.update(newGroup, {'sumValence': FieldValue.increment(_song!.valence)});
+      batch.update(newGroup, {'sumAcousticness': FieldValue.increment(_song!.acousticness)});
 
       var newFavorite = newGroup.collection('favoriteSongs').doc(widget.songID);
       batch.set(newFavorite, {
