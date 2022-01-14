@@ -40,6 +40,9 @@ class _InitialSongsPageState extends State<InitialSongsPage> {
 
         var newGroup = FirebaseFirestore.instance.collection('users').doc(user.email);
         batch.update(newGroup, {'noOfFavoriteSongs': FieldValue.increment(1)});
+        batch.update(newGroup, {'sumEnergy': FieldValue.increment(song["energy"])});
+        batch.update(newGroup, {'sumValence': FieldValue.increment(song["valence"])});
+        batch.update(newGroup, {'sumAcousticness': FieldValue.increment(song["acousticness"])});
 
         var newMember = newGroup.collection('favoriteSongs').doc(song["id"]);
         batch.set(newMember, song);
