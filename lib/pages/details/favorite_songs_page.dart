@@ -74,7 +74,13 @@ class _FavoriteSongsPageState extends State<FavoriteSongsPage> {
                                                   overflow: TextOverflow.ellipsis,
                                                   ),
                                               ),
-                                              Text((song["artists"] as List<dynamic>).join(","), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300))
+                                              Container(
+                                                width: MediaQuery.of(context).size.width * 0.7,
+                                                child: Text((song["artists"] as List<dynamic>).join(", "), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300),
+                                                  softWrap: false,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  ),
+                                              ),     
                                             ],
                                           ),
                                           Icon(Icons.arrow_right_rounded)

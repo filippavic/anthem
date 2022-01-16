@@ -152,7 +152,7 @@ class _InitialSongsPageState extends State<InitialSongsPage> {
       child: Container(
         height: 60,
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-        margin: EdgeInsets.only(bottom: 20.0),
+        margin: EdgeInsets.only(bottom: 15.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.0),
           border: Border.all(
@@ -173,9 +173,21 @@ class _InitialSongsPageState extends State<InitialSongsPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(globals.recommendedSongsInfo[songID]["name"], style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          child: Text(globals.recommendedSongsInfo[songID]["name"], style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white),
+                            softWrap: false,
+                            overflow: TextOverflow.ellipsis,
+                            ),
+                        ),
                         SizedBox(height: 3,),
-                        Text(globals.recommendedSongsInfo[songID]["artists"].join(", "), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300))
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          child: Text(globals.recommendedSongsInfo[songID]["artists"].join(", "), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300),
+                            softWrap: false,
+                            overflow: TextOverflow.ellipsis,
+                            ),
+                        ),
                       ],
                     ),
                   ],

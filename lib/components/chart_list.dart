@@ -158,7 +158,13 @@ class _ChartListState extends State<ChartList> {
                             overflow: TextOverflow.ellipsis,
                             ),
                         ),
-                        Text(item.song.artists.join(","), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300))
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          child: Text(item.song.artists.join(", "), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300),
+                            softWrap: false,
+                            overflow: TextOverflow.ellipsis,
+                            ),
+                        ),     
                       ],
                     ),
                   ],

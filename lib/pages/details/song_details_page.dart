@@ -179,7 +179,7 @@ class _SongDetailsPageState extends State<SongDetailsPage> {
                         SizedBox(height: 20),
                         _song != null ?
                         Text(
-                          _song!.artists.join(","),
+                          _song!.artists.join(", "),
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
                           textAlign: TextAlign.center,
                         ) : CircularProgressIndicator(strokeWidth:2.0, color: Colors.white),
