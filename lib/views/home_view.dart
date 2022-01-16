@@ -261,7 +261,13 @@ class _HomeViewState extends State<HomeView> {
                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(_distinctArtists.join(", ")),
+                                      Container(
+                                        width: MediaQuery.of(context).size.width * 0.7,
+                                        child: Text(_distinctArtists.join(", "),
+                                          softWrap: false,
+                                          overflow: TextOverflow.ellipsis,
+                                          ),
+                                      ),
                                       Text('... and more!')
                                     ],
                                   ),

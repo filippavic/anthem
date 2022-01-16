@@ -74,7 +74,13 @@ class _RecommendedSongsPageState extends State<RecommendedSongsPage> {
                                               overflow: TextOverflow.ellipsis,
                                               ),
                                           ),
-                                          Text((item["artists"] as List<dynamic>).join(","), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300))
+                                          Container(
+                                            width: MediaQuery.of(context).size.width * 0.7,
+                                            child: Text((item["artists"] as List<dynamic>).join(", "), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey.shade300),
+                                              softWrap: false,
+                                              overflow: TextOverflow.ellipsis,
+                                              ),
+                                          ),
                                         ],
                                       ),
                                     ],
