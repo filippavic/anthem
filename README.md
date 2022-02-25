@@ -12,8 +12,8 @@ The idea behind the application is to offer the user personalized recommendation
 It was built as a project for *Social Networks* course at the Faculty of Electrical Engineering and Computing, Zagreb.
 ## Features
 
-- Cross platform
-- Twitter login
+- Cross-platform
+- Twitter login - used to discover followed artists
 - Music recommender
 - *Music map* - discover music loved by nearby users
 
