@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Authentication {
   final String url = "https://accounts.spotify.com/api/token";
@@ -11,12 +12,13 @@ class Authentication {
   static Map<String, String>? headers;
   String? secret;
   SharedPreferences? prefs;
+  String clientId = dotenv.env['SPOTIFY_CLIENT_ID']!;
+  String clientSecret = dotenv.env['SPOTIFY_CLIENT_SECRET']!;
 
   _fetchSecret() async {
     prefs ??= await SharedPreferences.getInstance();
 
-    // Ovo se ne smije raditi (secret treba ici u .env), ali je dosta za sad
-    prefs!.setString('spotify_secret', "6135702b376f4bcbb7f20066b1525dbf:cf3e47fd307f4c35bba5b4336bd7fba4");
+    prefs!.setString('spotify_secret', clientId + ":" + clientSecret);
   }
 
   Future<String> _getSecret() async {
@@ -25,8 +27,8 @@ class Authentication {
     result = prefs!.getString('spotify_secret');
     if (result == null) {
       // await _fetchSecret();
-      prefs!.setString('spotify_secret', "6135702b376f4bcbb7f20066b1525dbf:cf3e47fd307f4c35bba5b4336bd7fba4");
-      result = "6135702b376f4bcbb7f20066b1525dbf:cf3e47fd307f4c35bba5b4336bd7fba4";
+      prefs!.setString('spotify_secret', clientId + ":" + clientSecret);
+      result = clientId + ":" + clientSecret;
     }
     return result;
   }
