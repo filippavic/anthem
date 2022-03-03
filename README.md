@@ -42,3 +42,25 @@ Back-end:
 
 ![Screenshots 2](https://res.cloudinary.com/filippavic/image/upload/v1645721829/Project%20screenshots/Anthem/anthem_mockup_2_ia35i4.png)
 
+
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your .env file
+
+`API_KEY` - Twitter API
+
+`API_SECRET_KEY` - Twitter API
+
+`BEARER_TOKEN` - Twitter API
+
+`REDIRECT_URI` - callback URL for Twitter login
+
+`WEATHER_SEARCH_ENDPOINT` - OpenWeather API
+
+`WEATHER_APP_ID` - OpenWeather API
+
+`MAPBOX_ACCESS_TOKEN` - Mapbox API
+
+`SPOTIFY_CLIENT_ID` - Spotify API
+
+`SPOTIFY_CLIENT_SECRET` - Spotify API
